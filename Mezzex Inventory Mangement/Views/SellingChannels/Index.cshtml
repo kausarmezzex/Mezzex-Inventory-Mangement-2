@@ -1,0 +1,114 @@
+﻿@model IEnumerable<Mezzex_Inventory_Mangement.Models.SellingChannel>
+
+@{
+    ViewData["Title"] = "Selling Channels";
+}
+<style>
+    /* Wrapper for table to add horizontal scrolling */
+    .table-responsive {
+        overflow-x: auto;
+        max-width: 100%;
+    }
+
+    /* Compact table style */
+    .compact-table {
+        font-size: 0.9em; /* Slightly smaller font */
+        white-space: nowrap; /* Prevent wrapping in table cells */
+    }
+
+        /* Reduce padding in table cells */
+        .compact-table th,
+        .compact-table td {
+            padding: 8px;
+            vertical-align: middle;
+        }
+
+    /* Button styling adjustments */
+    .btn-action {
+        font-size: 0.85em;
+    }
+</style>
+<h3 class="text-center my-4">Create Selling Channel and Assign Company to Selling Channel</h3>
+<div class="d-flex justify-content-between align-items-center mb-3 mt-5">
+    <!-- Search input on the left side -->
+    <input type="text" id="companyNameSearch"
+           class="form-control me-3"
+           style="
+                width: 100%;
+                max-width: 300px;
+                padding: 7px 23px;
+                border: 1px solid #ced4da;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                transition: box-shadow 0.3s ease, border-color 0.3s ease;"
+           placeholder="Search By Company Name"
+           onkeyup="filterTable()" />
+
+    <!-- Alerts Section -->
+    <div class="flex-grow-1 me-3">
+        @await Html.PartialAsync("_AlertMessages")
+    </div>
+
+    <!-- Button group for "Add New Company" and "Export to Excel" on the right side -->
+    <div class="d-flex">
+        <a asp-action="Create" class="btn btn-primary me-2">Add New Selling Channel</a>
+        <a asp-controller="SellingChannels" asp-action="ExportToExcel" class="btn btn-info">Export to Excel</a>
+    </div>
+
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover compact-table" id="sellingChannelTable">
+        <thead class="table-dark">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.SellingChannelName)</th>
+                <th>@Html.DisplayNameFor(model => model.Company.CompanyName)</th>
+                <th>@Html.DisplayNameFor(model => model.CreatedOn)</th>
+                <th>@Html.DisplayNameFor(model => model.CreatedBy)</th>
+                <th>@Html.DisplayNameFor(model => model.ModifiedOn)</th>
+                <th>@Html.DisplayNameFor(model => model.ModifiedBy)</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.SellingChannelName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Company.CompanyName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.CreatedOn)</td>
+                    <td>@Html.DisplayFor(modelItem => item.CreatedBy)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ModifiedOn)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ModifiedBy)</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.SellingChannelId" class="btn btn-warning btn-sm btn-action">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.SellingChannelId" class="btn btn-info btn-sm btn-action">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.SellingChannelId" class="btn btn-danger btn-sm btn-action">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function filterSellingChannels() {
+        // Get the search input value and convert it to lowercase
+        let searchValue = document.getElementById("sellingChannelSearch").value.toLowerCase();
+
+        // Get the table and rows
+        let table = document.getElementById("sellingChannelTable");
+        let rows = table.getElementsByTagName("tr");
+
+        // Loop through the rows, skipping the header
+        for (let i = 1; i < rows.length; i++) {
+            // Get the selling channel name cell for each row
+            let channelNameCell = rows[i].getElementsByTagName("td")[0]; // First column
+            if (channelNameCell) {
+                // Get the text content and check if it includes the search value
+                let channelName = channelNameCell.textContent || channelNameCell.innerText;
+                rows[i].style.display = channelName.toLowerCase().includes(searchValue) ? "" : "none";
+            }
+        }
+    }
+</script>

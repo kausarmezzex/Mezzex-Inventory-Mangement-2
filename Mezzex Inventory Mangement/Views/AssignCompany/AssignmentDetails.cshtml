@@ -1,0 +1,53 @@
+﻿@model Mezzex_Inventory_Mangement.ViewModels.AssignCompanyViewModel
+
+<h2 class="text-center my-4">Assignment Details</h2>
+
+<div class="container">
+    <div class="d-flex justify-content-end mb-3">
+        <!-- Back Button -->
+        <a href="javascript:history.back()" class="btn btn-secondary">Back</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>User</th>
+                    <th>Company</th>
+                    <th>Assigned Selling Channels</th> <!-- Updated column for assigned channels -->
+                    <th>Created By</th>
+                    <th>Created On</th>
+                    <th>Modified By</th>
+
+                    <th>Modified On</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var assignment in Model.Assignments)
+                {
+                    <tr>
+                        <td>@assignment.User.UserName</td>
+                        <td>@assignment.Company.CompanyName</td>
+                        <td>
+                            @if (assignment.SellingChannels != null && assignment.SellingChannels.Any())
+                            {
+                                <!-- Display each assigned selling channel -->
+                                @foreach (var channel in assignment.SellingChannels)
+                                {
+                                    <span class="badge bg-info text-dark">@channel.SellingChannelName</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">No Channels Assigned</span>
+                            }
+                        </td>
+                        <td>@assignment.CreatedBy</td>
+                        <td>@assignment.CreatedOn?.ToString("g")</td>
+                        <td>@assignment.ModifiedBy</td>
+                        <td>@assignment.ModifiedOn?.ToString("g")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

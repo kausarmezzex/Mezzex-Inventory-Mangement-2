@@ -1,0 +1,43 @@
+﻿@using Mezzex_Inventory_Mangement.ViewModels
+@model ManageRoleUsersViewModel
+
+@{
+    ViewData["Title"] = $"Manage Users for Role: {Model.RoleName}";
+}
+
+<h2>Manage Users for Role: @Model.RoleName</h2>
+
+<form asp-action="ManageRoleUsers" method="post">
+    <input type="hidden" asp-for="RoleId" />
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>User Name</th>
+                <th>Full Name</th>
+                @foreach (var permission in Model.Permissions)
+                {
+                    <th>@permission.PermissionName (@permission.Page)</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Users.Count; i++)
+            {
+                <tr>
+                    <td>@Model.Users[i].UserName</td>
+                    <td>@Model.Users[i].FullName</td>
+                    @for (int j = 0; j < Model.Users[i].Permissions.Count; j++)
+                    {
+                        <td>
+                            <input type="checkbox" asp-for="Users[i].Permissions[j].IsAssigned" />
+                            <input type="hidden" asp-for="Users[i].Permissions[j].PermissionId" />
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>

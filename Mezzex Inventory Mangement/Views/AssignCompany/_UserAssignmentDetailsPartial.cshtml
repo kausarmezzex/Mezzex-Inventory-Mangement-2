@@ -1,0 +1,36 @@
+﻿@model Mezzex_Inventory_Mangement.ViewModels.AssignCompanyViewModel
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Company</th>
+                <th>Selling Channels</th>
+                <th>Created On</th>
+                <th>Created By</th>
+                <th>Modified On</th>
+                <th>Modified By</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var assignment in Model.Assignments)
+            {
+                <tr>
+                    <td>@assignment.Company.CompanyName</td>
+                    <td>
+                        @foreach (var channel in assignment.SellingChannels)
+                        {
+                            <span class="badge bg-primary">@channel.SellingChannelName</span>
+                        }
+                    </td>
+                    <td>@(assignment.CreatedOn != null ? assignment.CreatedOn.Value.ToString("g") : "N/A")</td>
+                    <td>@(!string.IsNullOrEmpty(assignment.CreatedBy) ? assignment.CreatedBy : "N/A")</td>
+                    <td>@(assignment.ModifiedOn != null ? assignment.ModifiedOn.Value.ToString("dd-MM-yyyy HH:mm") : "N/A")</td>
+                    <td>@(!string.IsNullOrEmpty(assignment.ModifiedBy) ? assignment.ModifiedBy : "N/A")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+

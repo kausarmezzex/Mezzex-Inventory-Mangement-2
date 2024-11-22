@@ -1,0 +1,163 @@
+﻿@model Mezzex_Inventory_Mangement.ViewModels.UserDetailsViewModel
+
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 mx-auto" style="max-width: 950px; border-radius: 12px;">
+        <!-- Card Header -->
+        <div class="card-header bg-gradient-primary text-black text-center" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
+            <h3 class="mb-0 fw-bold">@Model.FirstName @Model.LastName</h3>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="row g-0">
+            <!-- Left Column: Profile Image -->
+            <div class="col-md-3 text-center bg-light d-flex flex-column align-items-center justify-content-center p-4" style="border-bottom-left-radius: 12px;">
+                @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+                {
+                    <img src="@Model.ProfileImageUrl"
+                         alt="Profile Image"
+                         class="img-thumbnail rounded-circle shadow"
+                         style="width: 180px; height: 180px; object-fit: cover; margin-bottom: 1rem;" />
+                }
+                else
+                {
+                    <div class="placeholder-image bg-secondary rounded-circle d-flex align-items-center justify-content-center"
+                         style="width: 180px; height: 180px; color: white; font-size: 24px; margin-bottom: 1rem;">
+                        <i class="bi bi-person"></i>
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-upload"></i> Upload Image
+                    </button>
+                }
+                <div class="mt-3">
+                    @if (Model.Active)
+                    {
+                        <span class="badge bg-success px-3 py-2 rounded-pill fs-6">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger px-3 py-2 rounded-pill fs-6">Inactive</span>
+                    }
+                </div>
+
+            </div>
+
+            <!-- Right Column: User Information -->
+            <div class="col-md-9">
+                <div class="card-body p-4">
+                    <h5 class="text-primary mb-4"><i class="bi bi-info-circle"></i> User Information</h5>
+                    <div class="row">
+                        <!-- First Column of Details -->
+                        <div class="col-md-6">
+                            <table class="table table-borderless mb-0">
+                                <tbody>
+                                    <tr>
+                                        <th class="text-muted">First Name</th>
+                                        <td>@Model.FirstName</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">Last Name</th>
+                                        <td>@Model.LastName</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">Email</th>
+                                        <td>@Model.Email</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">Phone</th>
+                                        <td>@Model.PhoneNumber</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">Gender</th>
+                                        <td>@Model.Gender</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">Country</th>
+                                        <td>@Model.CountryName</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Second Column of Details -->
+                        <div class="col-md-6">
+                            <table class="table table-borderless mb-0">
+                                <tbody>
+                                    <tr>
+                                        <th class="text-muted">Roles</th>
+                                        <td>
+                                            @if (Model.Roles.Any())
+                                            {
+                                                <ul class="list-unstyled mb-0">
+                                                    @foreach (var role in Model.Roles)
+                                                    {
+                                                        <li><span class="badge bg-info text-dark px-2 py-1 rounded">@role</span></li>
+                                                    }
+                                                </ul>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">No Roles Assigned</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                     @* <tr>
+                                         <th class="text-muted">Permissions</th>
+                                         <td>
+                                             @if (Model.Permissions != null)
+                                             {
+                                                 <ul class="list-unstyled mb-0">
+                                                     @foreach (var permission in Model.Permissions)
+                                                     {
+                                                         <li><span class="badge bg-success px-2 py-1 rounded">@permission</span></li>
+                                                     }
+                                                 </ul>
+                                             }
+                                             else
+                                             {
+                                                 <span class="text-muted">No Permissions Assigned</span>
+                                             }
+                                         </td>
+                                     </tr> *@
+                                    <tr>
+                                        <th class="text-muted">DOB</th>
+                                        <td>@Model.DateOfBirth?.ToString("yyyy-MM-dd")</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">Created On</th>
+                                        <td>@Model.CreatedOn?.ToString("yyyy-MM-dd")</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">Created By</th>
+                                        <td>@Model.CreatedBy</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">Modified On</th>
+                                        <td>@Model.ModifiedOn?.ToString("yyyy-MM-dd")</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-muted">Modified By</th>
+                                        <td>@Model.ModifiedBy</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div class="card-footer d-flex justify-content-center align-items-center bg-light" style="border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-4">
+                <i class="bi bi-pencil"></i> Edit User
+            </a>
+
+            <a onclick="history.back()" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+</div>

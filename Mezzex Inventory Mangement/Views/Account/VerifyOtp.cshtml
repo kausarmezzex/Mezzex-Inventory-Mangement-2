@@ -1,0 +1,157 @@
+﻿@model Mezzex_Inventory_Mangement.ViewModels.VerifyOtpViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Verify OTP</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.1.0/css/adminlte.min.css">
+    <style>
+        /* Center the login box on the screen */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh; /* Full viewport height */
+            background-color: #f4f6f9;
+            margin: 0; /* Remove any default margin */
+        }
+
+        /* Styling for the login box */
+        .login-box {
+            width: 400px;
+            background-color: #000;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+        }
+
+        /* Flex container for logo and text */
+        .login-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .login-logo img {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            margin-right: 10px;
+            margin-top: 20px;
+        }
+
+        .login-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Form styling */
+        .form-control-icon {
+            position: relative;
+        }
+
+            .form-control-icon .input-icon-left {
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #ffffff;
+            }
+
+            .form-control-icon .input-icon-right {
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #ffffff;
+                cursor: pointer;
+            }
+
+        .form-control {
+            padding-left: 35px;
+            padding-right: 35px;
+            background-color: #222;
+            border: 1px solid #444;
+            color: #fff;
+        }
+
+            .form-control::placeholder {
+                color: #ccc;
+            }
+
+            .form-control:focus {
+                background-color: #222;
+                color: #fff;
+            }
+
+        /* Flex container for Remember Me and Forgot Password */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+
+        .form-check-label, .btn-primary {
+            color: #fff;
+        }
+
+        .form-check-label {
+            margin-bottom: 13px;
+        }
+
+        .forgot-password-link {
+            color: #ffffff;
+            text-decoration: none;
+            margin-bottom: 13px;
+        }
+
+            .forgot-password-link:hover {
+                text-decoration: none;
+                color: #9f9f9f;
+            }
+    </style>
+</head>
+<body class="login-container">
+    <div class="login-box">
+        <div class="login-header">
+            <div class="login-logo">
+                <img src="https://res.cloudinary.com/ddsenadu2/image/upload/v1728712730/mezzex-logo_jtfk6m.png" alt="Mezzex Logo" />
+            </div>
+            <div class="login-title">Verify OTP</div>
+        </div>
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        <div class="login-box-body">
+            <form asp-action="VerifyOtp" method="post">
+                <input type="hidden" asp-for="Email" value="@TempData["Email"]" />
+                <div class="form-group form-control-icon">
+                    <i class="fas fa-key input-icon-left"></i>
+                    <label asp-for="Otp" class="sr-only">OTP</label>
+                    <input asp-for="Otp" class="form-control" placeholder="Enter OTP" />
+                    <span asp-validation-for="Otp" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block mt-4">
+                    Verify OTP
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

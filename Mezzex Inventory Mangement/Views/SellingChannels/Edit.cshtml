@@ -1,0 +1,62 @@
+﻿@model Mezzex_Inventory_Mangement.Models.SellingChannel
+
+@{
+    ViewData["Title"] = "Edit Selling Channel";
+}
+
+<h1 class="text-center">Edit Selling Channel</h1>
+<form asp-action="Edit">
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h5>Selling Channel Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3 "></div>
+
+                        <!-- Hidden field for SellingChannelId -->
+                        <input type="hidden" asp-for="SellingChannelId" />
+
+                        <!-- Selling Channel Name -->
+                        <div class="form-group mb-3">
+                            <label asp-for="SellingChannelName" class="control-label mb-2">Selling Channel Name</label>
+                            <input asp-for="SellingChannelName" class="form-control" />
+                            <span asp-validation-for="SellingChannelName" class="text-danger"></span>
+                        </div>
+
+                        <!-- Company Selection Dropdown -->
+                        <div class="form-group mb-3">
+                            <label asp-for="CompanyId" class="control-label mb-2">Company</label>
+                            <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId">
+                                <option value="">Select Company</option> <!-- Placeholder option -->
+                            </select>
+                            <span asp-validation-for="CompanyId" class="text-danger"></span>
+                        </div>
+                        <input type="hidden" asp-for="CreatedBy" />
+                        <input type="hidden" asp-for="CreatedOn" />
+                        <!-- IsDeleted Checkbox -->
+                        <div class="form-group form-check mb-3">
+                            <input class="form-check-input" asp-for="IsDeleted" />
+                            <label asp-for="IsDeleted" class="form-check-label mb-2">@Html.DisplayNameFor(model => model.IsDeleted)</label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center mt-4">
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                            <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

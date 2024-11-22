@@ -1,0 +1,171 @@
+﻿@model Mezzex_Inventory_Mangement.Models.ManageCompany
+
+@{
+    ViewData["Title"] = "Company Details";
+}
+
+<h1 class="text-center">Company Details</h1>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Left Column for Company Details with Two-Column Layout Inside -->
+        <div class="col-md-6">
+            <div class="card mb-3 shadow" style="min-height: 700px;">
+                <div class="card-header bg-info text-white">
+                    <h5>Company Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <strong>Company Name:</strong>
+                                <p>@Model.CompanyName</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Email:</strong>
+                                <p>@Model.Email</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Phone:</strong>
+                                <p>@Model.Phone</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Postcode:</strong>
+                                <p>@Model.Postcode</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>VAT Number:</strong>
+                                <p>@Model.VatNumber</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Company Number:</strong>
+                                <p>@Model.CompanyNumber</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Currency Code:</strong>
+                                <p>@Model.CurrencyCode</p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <strong>Country Name:</strong>
+                                <p>@Model.CountryName</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Website:</strong>
+                                <p>@Model.WebsiteName</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Address:</strong>
+                                <p>@Model.Address</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>City:</strong>
+                                <p>@Model.City</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>State:</strong>
+                                <p>@Model.State</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Fax:</strong>
+                                <p>@Model.Fax</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Invoice Prefix:</strong>
+                                <p>@Model.InvoicePrefixNumber</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Company Status, Year Start Month, and VAT Cycle -->
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <strong>Company Status:</strong>
+                            <p>@Model.CompanyStatus</p>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Year Start Month:</strong>
+                            <p>@Model.YearStartMonth</p>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>VAT Cycle:</strong>
+                            <p>@Model.VatCycle</p>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-3">
+                            <strong>Created On:</strong>
+                            <p>@Model.CreatedOn.GetValueOrDefault().ToString("yyyy-MM-dd")</p>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Created By:</strong>
+                            <p>@Model.CreatedBy</p>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Modified On:</strong>
+                            <p>@Model.ModifiedOn.GetValueOrDefault().ToString("yyyy-MM-dd")</p>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Modified By:</strong>
+                            <p>@Model.ModifiedBy</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column for Bank Details with Equal Height -->
+        <div class="col-md-6">
+            <div class="card shadow" style="min-height: 700px;">
+                <div class="card-header bg-info text-white">
+                    <h5>Bank Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Bank Name:</strong>
+                        <p>@Model.BankName</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Account Name:</strong>
+                        <p>@Model.AccountName</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Account Number:</strong>
+                        <p>@Model.AccountNumber</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>IFSC Code:</strong>
+                        <p>@Model.IFSCCode</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Account Type:</strong>
+                        <p>@Model.AccountType</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Sort Code:</strong>
+                        <p>@Model.SortCode</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>IBAN:</strong>
+                        <p>@Model.IBAN</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>BIC:</strong>
+                        <p>@Model.BIC</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Bank Address:</strong>
+                        <p>@Model.BankAddress</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-2">
+    <a class="btn btn-info" asp-action="Edit" asp-route-id="@Model?.CompanyId">Edit</a>
+    <a class="btn btn-secondary ms-2" asp-action="Index">Back to List</a>
+</div>

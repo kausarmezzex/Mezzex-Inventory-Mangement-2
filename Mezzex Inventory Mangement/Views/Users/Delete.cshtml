@@ -1,0 +1,21 @@
+﻿@model Mezzex_Inventory_Mangement.Models.ApplicationUser
+
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-sm w-75 w-md-50">
+        <div class="card-header bg-danger text-white text-center">
+            <h2 class="h4 mb-0">Delete User</h2>
+        </div>
+        <div class="card-body text-center">
+            <h3 class="text-danger mb-3">Are you sure you want to delete this user?</h3>
+            <div class="mb-4">
+                <h4 class="fw-bold">@Model.FirstName @Model.LastName</h4>
+                <p class="text-muted">@Model.Email</p>
+            </div>
+            <form asp-action="DeleteConfirmed" method="post">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger me-2">Delete</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

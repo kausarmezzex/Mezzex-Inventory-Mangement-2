@@ -1,0 +1,268 @@
+﻿@model Mezzex_Inventory_Mangement.ViewModels.AssignCompanyViewModel
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css" rel="stylesheet" />
+
+<style>
+    .table-responsive, #assignTable {
+        margin: 0;
+        padding: 0;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        max-width: 100%;
+    }
+
+    .compact-table {
+        font-size: 0.9em;
+        white-space: nowrap;
+    }
+
+        .compact-table th, .compact-table td {
+            padding: 8px;
+        }
+
+    .btn-action {
+        font-size: 0.85em;
+    }
+
+    .search-input {
+        width: 100%;
+        max-width: 300px;
+        padding: 7px 23px;
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-details-link {
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+    }
+
+    .modal-xl {
+        max-width: 1170px;
+    }
+
+    .selling-channel-dropdown {
+        width: 160px !important;
+        margin-right: 8px;
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        margin-left: 5px;
+    }
+
+    .selected-channels {
+        margin-top: 5px;
+        font-size: 0.85em;
+        color: #6c757d;
+        max-width: 180px;
+        word-wrap: break-word;
+    }
+
+    .small, small {
+        font-size: 88%;
+        font-weight: 410;
+</style>
+
+<div>
+    <h2 class="text-center my-3">Assign Companies to Users</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <input type="text" id="usernameSearch" class="form-control me-3 search-input" placeholder="Search by Username" />
+
+        <div class="flex-grow-1 me-3">
+            @await Html.PartialAsync("_AlertMessages")
+        </div>
+
+        <div class="d-flex">
+            <button type="submit" class="btn btn-primary me-2" form="assignForm">Assign</button>
+            <button type="button" id="exportToExcel" class="btn btn-info text-white">Export to Excel</button>
+        </div>
+    </div>
+</div>
+
+<form id="assignForm" method="post" asp-action="AssignCompanyToUser">
+    @Html.AntiForgeryToken()
+    <div class="table-responsive">
+        <table class="table table-striped table-hover compact-table w-100" id="assignTable">
+            <thead class="table-dark">
+                <tr>
+                    <th>User</th>
+                    @foreach (var company in Model.Companies)
+                    {
+                        <th>@company.CompanyName</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (int userIndex = 0; userIndex < Model.Users.Count; userIndex++)
+                {
+                    var user = Model.Users[userIndex];
+                    <tr>
+                        <td>
+                            <a href="#" class="user-details-link" data-user-id="@user.Id" data-toggle="modal" data-target="#userDetailsModal">
+                                <strong>@(user.FirstName + " " + user.LastName)</strong>
+                            </a>
+                        </td>
+                        @for (int companyIndex = 0; companyIndex < Model.Companies.Count; companyIndex++)
+                        {
+                            var company = Model.Companies[companyIndex];
+                            var userCompanyAssignment = Model.Assignments
+                            .FirstOrDefault(a => a.UserId == user.Id && a.CompanyId == company.CompanyId);
+
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <!-- Selling Channel Dropdown -->
+                                    <select name="Assignments[@(userIndex * Model.Companies.Count + companyIndex)].SellingChannelIds"
+                                            class="selectpicker form-control selling-channel-dropdown me-2"
+                                            multiple data-live-search="true" data-selected-text-format="count > 1"
+                                            data-style="btn-light btn-sm" data-actions-box="true"
+                                            title="Select Selling Channels"
+                                    @(userCompanyAssignment != null ? "" : "disabled")
+                                            onchange="updateSelectedChannels(@userIndex, @companyIndex)">
+                                        @if (Model.CompanySellingChannels.ContainsKey(company.CompanyId))
+                                        {
+                                            @foreach (var channel in Model.CompanySellingChannels[company.CompanyId])
+                                            {
+                                                @if (userCompanyAssignment != null && userCompanyAssignment.SellingChannelIds.Contains(channel.SellingChannelId))
+                                                {
+                                                    <option value="@channel.SellingChannelId" selected="selected">
+                                                        @channel.SellingChannelName
+                                                    </option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@channel.SellingChannelId">
+                                                        @channel.SellingChannelName
+                                                    </option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+
+                                    <!-- Company Assignment Checkbox beside the dropdown -->
+                                    <div class="form-check ms-2">
+                                        <input type="checkbox" class="form-check-input assign-company-checkbox"
+                                               name="Assignments[@(userIndex * Model.Companies.Count + companyIndex)].CompanyId"
+                                               value="@company.CompanyId" data-user-index="@userIndex" data-company-index="@companyIndex"
+                                        @(userCompanyAssignment != null ? "checked" : "") />
+                                    </div>
+                                </div>
+
+                                <!-- Selected Channels Below -->
+                                <div id="selected-channels-@(userIndex)-@(companyIndex)" class="selected-channels mt-1 mb-0 pb-0">
+                                    @if (userCompanyAssignment != null)
+                                    {
+                                        var selectedChannels = Model.CompanySellingChannels[company.CompanyId]
+                                        .Where(sc => userCompanyAssignment.SellingChannelIds.Contains(sc.SellingChannelId))
+                                        .Select(sc => sc.SellingChannelName)
+                                        .ToList();
+
+                                        <!-- Display two channels per line -->
+                                        <small class="mt-0 py-0">
+                                            @for (int i = 0; i < selectedChannels.Count; i++)
+                                            {
+                                                @selectedChannels[i]
+                                                @if ((i + 1) % 2 == 0 && i < selectedChannels.Count - 1)
+                                                {
+                                                    <br />
+                                                }
+                                                else if (i < selectedChannels.Count - 1)
+                                                {
+                                                    <span>, </span>
+                                                }
+                                            }
+                                        </small>
+                                    }
+                                </div>
+
+                                <input type="hidden" name="Assignments[@(userIndex * Model.Companies.Count + companyIndex)].UserId" value="@user.Id" />
+                            </td>
+
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</form>
+
+<!-- User Details Modal -->
+<div class="modal fade" id="userDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">User Assignment Details</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="userDetailsContent"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.selectpicker').selectpicker();
+
+            // Username search filter
+            $('#usernameSearch').on('keyup', function () {
+                var searchText = $(this).val().toLowerCase();
+                $('#assignTable tbody tr').each(function () {
+                    var row = $(this);
+                    var username = row.find('td:first').text().toLowerCase();
+                    row.toggle(username.includes(searchText));
+                });
+            });
+
+            // Checkbox change to enable/disable dropdown and deselect selling channels
+            $('.assign-company-checkbox').on('change', function () {
+                var checkbox = $(this);
+                var userIndex = checkbox.data('user-index');
+                var companyIndex = checkbox.data('company-index');
+                var dropdown = $(`select[name='Assignments[${userIndex * @Model.Companies.Count + companyIndex}].SellingChannelIds']`);
+
+                if (!checkbox.is(':checked')) {
+                    dropdown.val([]); // Clear selections
+                    dropdown.selectpicker('refresh'); // Refresh the dropdown UI
+                }
+
+                dropdown.prop('disabled', !checkbox.is(':checked'));
+                dropdown.selectpicker('refresh');
+            });
+
+            // Export to Excel
+            $('#exportToExcel').on('click', function () {
+                window.location.href = '@Url.Action("ExportToExcel", "AssignCompany")';
+            });
+
+            // Load user details in modal
+            $('.user-details-link').on('click', function (e) {
+                e.preventDefault();
+                var userId = $(this).data('user-id');
+                $('#userDetailsContent').html('<p>Loading...</p>');
+
+                // Fetch assignment details using AJAX
+                $.ajax({
+                    url: '@Url.Action("GetAssignmentDetailsByUserId", "AssignCompany")',
+                    type: 'GET',
+                    data: { userId: userId },
+                    success: function (response) {
+                        $('#userDetailsContent').html(response);
+                    },
+                    error: function () {
+                        $('#userDetailsContent').html('<p class="text-danger">Error loading details. Please try again later.</p>');
+                    }
+                });
+            });
+        });
+    </script>
+}

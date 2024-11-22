@@ -1,0 +1,125 @@
+﻿@model IEnumerable<Mezzex_Inventory_Mangement.Models.ManageCompany>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<style>
+    /* Wrapper for table to add horizontal scrolling */
+    .table-responsive {
+        overflow-x: auto;
+        max-width: 100%;
+    }
+
+    /* Compact table style */
+    .compact-table {
+        font-size: 0.9em; /* Slightly smaller font */
+        white-space: nowrap; /* Prevent wrapping in table cells */
+    }
+
+        /* Reduce padding in table cells */
+        .compact-table th,
+        .compact-table td {
+            padding: 8px; /* Slightly larger padding for better spacing */
+            vertical-align: middle; /* Center align text vertically */
+        }
+
+    /* Button styling adjustments */
+    .btn-action {
+        font-size: 0.85em;
+    }
+</style>
+
+<h3 class="text-center my-4">Create New Company</h3> 
+<div class="d-flex justify-content-between align-items-center mb-3 mt-5">
+    <!-- Search input on the left side -->
+    <input type="text" id="companyNameSearch"
+           class="form-control me-3"
+           style="
+                width: 100%;
+                max-width: 300px;
+                padding: 7px 23px;
+                border: 1px solid #ced4da;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                transition: box-shadow 0.3s ease, border-color 0.3s ease;"
+           placeholder="Search By Company Name"
+           onkeyup="filterTable()" />
+
+    <!-- Alerts Section -->
+    <div class="flex-grow-1 me-3">
+        @await Html.PartialAsync("_AlertMessages")
+    </div>
+
+    <!-- Button group for "Add New Company" and "Export to Excel" on the right side -->
+    <div class="d-flex">
+        <a asp-action="Create" class="btn btn-primary me-2">Add New Company</a>
+        <a asp-action="ExportToExcel" class="btn btn-info">Export to Excel</a>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover compact-table" id="companyTable">
+        <thead class="table-dark">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.CompanyName)</th>
+                <th>@Html.DisplayNameFor(model => model.CountryName)</th>
+                <th>@Html.DisplayNameFor(model => model.WebsiteName)</th>
+                <th>@Html.DisplayNameFor(model => model.Phone)</th>
+                <th>@Html.DisplayNameFor(model => model.Address)</th>
+                <th>@Html.DisplayNameFor(model => model.CreatedBy)</th>
+                <th>@Html.DisplayNameFor(model => model.ModifiedBy)</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.CompanyName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.CountryName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.WebsiteName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Phone)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                    <td>@Html.DisplayFor(modelItem => item.CreatedBy)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ModifiedBy)</td>
+                    <td>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Administrator") || User.HasClaim("Permission", "Manage Company"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.CompanyId" class="btn btn-warning btn-sm btn-action">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.CompanyId" class="btn btn-danger btn-sm btn-action">Delete</a>
+                            <a asp-action="Details" asp-route-id="@item.CompanyId" class="btn btn-info btn-sm btn-action">Details</a>
+                        }
+                         else if (User.HasClaim("Permission", "View Assigned Company"))
+                         {
+                             <a asp-action="Details" asp-route-id="@item.CompanyId" class="btn btn-info btn-sm btn-action">Details</a>
+
+                         }
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function filterTable() {
+        // Get the search input value and convert it to lowercase
+        let searchValue = document.getElementById("companyNameSearch").value.toLowerCase();
+
+        // Get the table and rows
+        let table = document.getElementById("companyTable");
+        let rows = table.getElementsByTagName("tr");
+
+        // Loop through the rows, skipping the header
+        for (let i = 1; i < rows.length; i++) {
+            // Get the company name cell for each row
+            let companyNameCell = rows[i].getElementsByTagName("td")[0]; // First column
+            if (companyNameCell) {
+                // Get the text content and check if it includes the search value
+                let companyName = companyNameCell.textContent || companyNameCell.innerText;
+                rows[i].style.display = companyName.toLowerCase().includes(searchValue) ? "" : "none";
+            }
+        }
+    }
+</script>

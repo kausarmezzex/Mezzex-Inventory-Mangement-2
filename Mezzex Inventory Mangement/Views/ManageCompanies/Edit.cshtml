@@ -1,0 +1,209 @@
+﻿@model Mezzex_Inventory_Mangement.Models.ManageCompany
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1 class="text-center">Edit Company</h1>
+<form asp-action="Edit">
+    <div class="container mt-4">
+        <div class="row">
+
+            <!-- Left Column for Company Details with Two-Column Layout Inside -->
+            <div class="col-md-6">
+                <div class="card mb-3 shadow" style="min-height: 750px;">
+                    <div class="card-header bg-primary text-white">
+                        <h5>Manage Company</h5>
+                    </div>
+                    <div class="card-body">
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <input type="hidden" asp-for="CompanyId" />
+
+                        <!-- Company Details Two-Column Layout -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label asp-for="CompanyName" class="control-label mb-2">Company Name</label>
+                                    <input asp-for="CompanyName" class="form-control" />
+                                    <span asp-validation-for="CompanyName" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label asp-for="Email" class="control-label mb-2">Email</label>
+                                    <input asp-for="Email" class="form-control" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label asp-for="Phone" class="control-label mb-2">Phone</label>
+                                    <input asp-for="Phone" class="form-control" />
+                                    <span asp-validation-for="Phone" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label asp-for="Postcode" class="control-label mb-2">Postcode</label>
+                                    <input asp-for="Postcode" class="form-control" />
+                                    <span asp-validation-for="Postcode" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label asp-for="VatNumber" class="control-label mb-2">VAT Number</label>
+                                    <input asp-for="VatNumber" class="form-control" />
+                                    <span asp-validation-for="VatNumber" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label asp-for="CompanyNumber" class="control-label mb-2">Company Number</label>
+                                    <input asp-for="CompanyNumber" class="form-control" />
+                                    <span asp-validation-for="CompanyNumber" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label asp-for="CurrencyCode" class="control-label mb-2">Currency Code</label>
+                                    <input asp-for="CurrencyCode" class="form-control" />
+                                    <span asp-validation-for="CurrencyCode" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <!-- Address Fields -->
+                                <div class="form-group mb-2">
+                                    <label asp-for="CountryName" class="control-label mb-2">Country Name</label>
+                                    <input asp-for="CountryName" class="form-control" />
+                                    <span asp-validation-for="CountryName" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label asp-for="WebsiteName" class="control-label mb-2">Website Name</label>
+                                    <input asp-for="WebsiteName" class="form-control" />
+                                    <span asp-validation-for="WebsiteName" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label asp-for="Address" class="control-label mb-2">Address</label>
+                                    <input asp-for="Address" class="form-control" />
+                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label asp-for="City" class="control-label mb-2">City</label>
+                                    <input asp-for="City" class="form-control" />
+                                    <span asp-validation-for="City" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label asp-for="State" class="control-label mb-2">State</label>
+                                    <input asp-for="State" class="form-control" />
+                                    <span asp-validation-for="State" class="text-danger"></span>
+                                </div>
+                                <input type="hidden" asp-for="CreatedBy" />
+                                <input type="hidden" asp-for="CreatedOn" />
+
+                                <div class="form-group mb-2">
+                                    <label asp-for="Fax" class="control-label mb-2">Fax</label>
+                                    <input asp-for="Fax" class="form-control" />
+                                    <span asp-validation-for="Fax" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label asp-for="InvoicePrefixNumber" class="control-label mb-2">Invoice Prefix Number</label>
+                                    <input asp-for="InvoicePrefixNumber" class="form-control" />
+                                    <span asp-validation-for="InvoicePrefixNumber" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <!-- Row with Company Status, Year Start Month, and VAT Cycle -->
+                            <div class="row mt-3">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="CompanyStatus" class="control-label mb-2">Company Status</label>
+                                        <select asp-for="CompanyStatus" class="form-control"
+                                                asp-items="@(new SelectList(ManageCompany.CompanyStatusOptions, Model.CompanyStatus))">
+                                        </select>
+                                        <span asp-validation-for="CompanyStatus" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="YearStartMonth" class="control-label mb-2">Year Start Month</label>
+                                        <select asp-for="YearStartMonth" class="form-control"
+                                                asp-items="@(new SelectList(ManageCompany.YearStartMonthOptions, Model.YearStartMonth))">
+                                        </select>
+                                        <span asp-validation-for="YearStartMonth" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="VatCycle" class="control-label mb-2">VAT Cycle</label>
+                                        <select asp-for="VatCycle" class="form-control"
+                                                asp-items="@(new SelectList(ManageCompany.VatCycleOptions, Model.VatCycle))">
+                                        </select>
+                                        <span asp-validation-for="VatCycle" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group text-center mt-4">
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                            <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column for Bank Details with Equal Height -->
+            <div class="col-md-6">
+                <div class="card shadow" style="min-height: 750px;">
+                    <div class="card-header bg-primary text-white">
+                        <h5>Bank Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Bank Details Fields -->
+                        <div class="form-group mb-2">
+                            <label asp-for="BankName" class="control-label mb-2">Bank Name</label>
+                            <input asp-for="BankName" class="form-control" />
+                            <span asp-validation-for="BankName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label asp-for="AccountName" class="control-label mb-2">Account Name</label>
+                            <input asp-for="AccountName" class="form-control" />
+                            <span asp-validation-for="AccountName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label asp-for="AccountNumber" class="control-label mb-2">Account Number</label>
+                            <input asp-for="AccountNumber" class="form-control" />
+                            <span asp-validation-for="AccountNumber" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label asp-for="IFSCCode" class="control-label mb-2">IFSC Code</label>
+                            <input asp-for="IFSCCode" class="form-control" />
+                            <span asp-validation-for="IFSCCode" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label asp-for="AccountType" class="control-label mb-2">Account Type</label>
+                            <input asp-for="AccountType" class="form-control" />
+                            <span asp-validation-for="AccountType" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label asp-for="SortCode" class="control-label mb-2">Sort Code</label>
+                            <input asp-for="SortCode" class="form-control" />
+                            <span asp-validation-for="SortCode" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label asp-for="IBAN" class="control-label mb-2">IBAN</label>
+                            <input asp-for="IBAN" class="form-control" />
+                            <span asp-validation-for="IBAN" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label asp-for="BIC" class="control-label mb-2">BIC</label>
+                            <input asp-for="BIC" class="form-control" />
+                            <span asp-validation-for="BIC" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="BankAddress" class="control-label mb-2">Bank Address</label>
+                            <input asp-for="BankAddress" class="form-control" />
+                            <span asp-validation-for="BankAddress" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

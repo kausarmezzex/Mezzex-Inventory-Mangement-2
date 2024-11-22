@@ -1,0 +1,40 @@
+﻿@using Mezzex_Inventory_Mangement.ViewModels
+@model UserPermissionViewModel
+
+@{
+    ViewData["Title"] = "Override User Permissions";
+}
+
+<h2>Override Permissions for User: @Model.UserName</h2>
+
+<form asp-action="OverrideUserPermissions" method="post">
+    <input type="hidden" asp-for="UserId" />
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Permission</th>
+                <th>Page</th>
+                <th>Override</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var permission in Model.Permissions)
+            {
+                <tr>
+                    <td>@permission.PermissionName</td>
+                    <td>@permission.Page</td>
+                    <td>
+                        <input type="checkbox" asp-for="@permission.IsAssigned" value="true" />
+                        <input type="hidden" name="Permissions.Index" value="@Model.Permissions.IndexOf(permission)" />
+                        <input type="hidden" asp-for="@permission.PermissionId" />
+                        <input type="hidden" asp-for="@permission.PermissionName" />
+                        <input type="hidden" asp-for="@permission.Page" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
