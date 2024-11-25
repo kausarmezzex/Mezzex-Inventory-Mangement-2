@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Mezzex_Inventory_Mangement.Controllers
 {
-    [Authorize]
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -54,8 +54,9 @@ namespace Mezzex_Inventory_Mangement.Controllers
 
             HttpContext.Session.SetString("AssignedCompanies", JsonConvert.SerializeObject(assignedCompanies));
             HttpContext.Session.SetString("SelectedCompanyName", selectedCompany.CompanyName); // Store in session
-
+            HttpContext.Session.SetString("SelectedCompanyImage", selectedCompany.CompanyLogoUrl); // Store in session
             ViewBag.SelectedCompanyId = selectedCompany.CompanyId;
+
             ViewBag.SelectedCompanyName = selectedCompany.CompanyName;
             ViewBag.AssignedCompanies = assignedCompanies;
 
@@ -77,9 +78,15 @@ namespace Mezzex_Inventory_Mangement.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(string message)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var errorModel = new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+                Message = message // Include the custom error message
+            };
+
+            return View(errorModel);
         }
     }
 }

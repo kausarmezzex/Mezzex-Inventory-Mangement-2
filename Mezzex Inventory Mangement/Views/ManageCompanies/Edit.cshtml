@@ -1,11 +1,15 @@
 ﻿@model Mezzex_Inventory_Mangement.Models.ManageCompany
-
+<style>
+    .margin_top{
+        margin-top: 3.2rem !important;
+    }
+</style>
 @{
     ViewData["Title"] = "Edit";
 }
 
 <h1 class="text-center">Edit Company</h1>
-<form asp-action="Edit">
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
     <div class="container mt-4">
         <div class="row">
 
@@ -58,6 +62,18 @@
                                     <input asp-for="CurrencyCode" class="form-control" />
                                     <span asp-validation-for="CurrencyCode" class="text-danger"></span>
                                 </div>
+                                
+                                @if (!string.IsNullOrEmpty(Model.CompanyLogoUrl))
+                                {
+                                    <div>
+                                        <p>Current Logo:</p>
+                                        <img src="@Model.CompanyLogoUrl" alt="Company Logo" style="max-width: 150px; max-height: 200px;" />
+                                    </div>
+                                }
+                                <div class="form-group">
+                                    <label asp-for="CompanyLogoUrl">Change Company Logo</label>
+                                    <input type="file" name="companyLogo" class="form-control" />
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <!-- Address Fields -->
@@ -101,7 +117,7 @@
                                 </div>
                             </div>
                             <!-- Row with Company Status, Year Start Month, and VAT Cycle -->
-                            <div class="row mt-3">
+                            <div class="row mt-1">
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label asp-for="CompanyStatus" class="control-label mb-2">Company Status</label>
@@ -133,11 +149,6 @@
 
                         </div>
 
-                        <div class="form-group text-center mt-4">
-                            <input type="submit" value="Save" class="btn btn-primary" />
-                            <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
-                        </div>
-
                     </div>
                 </div>
             </div>
@@ -150,50 +161,54 @@
                     </div>
                     <div class="card-body">
                         <!-- Bank Details Fields -->
-                        <div class="form-group mb-2">
+                        <div class="form-group mb-2 mt-2">
                             <label asp-for="BankName" class="control-label mb-2">Bank Name</label>
                             <input asp-for="BankName" class="form-control" />
                             <span asp-validation-for="BankName" class="text-danger"></span>
                         </div>
-                        <div class="form-group mb-2">
+                        <div class="form-group mb-2 mt-2">
                             <label asp-for="AccountName" class="control-label mb-2">Account Name</label>
                             <input asp-for="AccountName" class="form-control" />
                             <span asp-validation-for="AccountName" class="text-danger"></span>
                         </div>
-                        <div class="form-group mb-2">
+                        <div class="form-group mb-2 mt-2">
                             <label asp-for="AccountNumber" class="control-label mb-2">Account Number</label>
                             <input asp-for="AccountNumber" class="form-control" />
                             <span asp-validation-for="AccountNumber" class="text-danger"></span>
                         </div>
-                        <div class="form-group mb-2">
+                        <div class="form-group mb-2 mt-2">
                             <label asp-for="IFSCCode" class="control-label mb-2">IFSC Code</label>
                             <input asp-for="IFSCCode" class="form-control" />
                             <span asp-validation-for="IFSCCode" class="text-danger"></span>
                         </div>
-                        <div class="form-group mb-2">
+                        <div class="form-group mb-2 mt-2">
                             <label asp-for="AccountType" class="control-label mb-2">Account Type</label>
                             <input asp-for="AccountType" class="form-control" />
                             <span asp-validation-for="AccountType" class="text-danger"></span>
                         </div>
-                        <div class="form-group mb-2">
+                        <div class="form-group mb-2 mt-2">
                             <label asp-for="SortCode" class="control-label mb-2">Sort Code</label>
                             <input asp-for="SortCode" class="form-control" />
                             <span asp-validation-for="SortCode" class="text-danger"></span>
                         </div>
-                        <div class="form-group mb-2">
+                        <div class="form-group mb-2 mt-2">
                             <label asp-for="IBAN" class="control-label mb-2">IBAN</label>
                             <input asp-for="IBAN" class="form-control" />
                             <span asp-validation-for="IBAN" class="text-danger"></span>
                         </div>
-                        <div class="form-group mb-2">
+                        <div class="form-group mb-2 mt-2">
                             <label asp-for="BIC" class="control-label mb-2">BIC</label>
                             <input asp-for="BIC" class="form-control" />
                             <span asp-validation-for="BIC" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label asp-for="BankAddress" class="control-label mb-2">Bank Address</label>
+                            <label asp-for="BankAddress" class="control-label mb-2 mt-2">Bank Address</label>
                             <input asp-for="BankAddress" class="form-control" />
                             <span asp-validation-for="BankAddress" class="text-danger"></span>
+                        </div>
+                        <div class="form-group text-center margin_top">
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                            <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
                         </div>
                     </div>
                 </div>

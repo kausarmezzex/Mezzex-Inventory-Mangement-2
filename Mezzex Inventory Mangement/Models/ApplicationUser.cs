@@ -11,7 +11,6 @@ namespace Mezzex_Inventory_Mangement.Models
 
         // New properties
         public string? CountryName { get; set; }
-        public ICollection<UserPermission>? UserPermissions { get; set; }
         public string? PasswordResetToken { get; set; }
         public DateTime? PasswordResetTokenExpiration { get; set; }
         public ICollection<IdentityUserRole<int>>? UserRoles { get; set; } // Many-to-Many with Roles

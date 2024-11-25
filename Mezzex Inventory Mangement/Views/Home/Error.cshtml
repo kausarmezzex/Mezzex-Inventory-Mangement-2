@@ -1,0 +1,79 @@
+﻿@model Mezzex_Inventory_Mangement.Models.ErrorViewModel
+<link href="~/css/bat.css" rel="stylesheet">
+<style>
+    .flex{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .lock {
+    margin-top: 120px;
+    border-radius: 5px;
+    width: 55px;
+    height: 45px;
+    background-color: #333;
+    animation: dip 1s forwards; /* Ensure it stays in place after animation */
+}
+
+.lock::before, .lock::after {
+    content: "";
+    position: absolute;
+    border-left: 5px solid #333;
+    height: 20px;
+    width: 15px;
+    left: calc(50% - 12.5px);
+}
+
+.lock::before {
+    top: -30px;
+    border: 5px solid #333;
+    border-bottom-color: transparent;
+    border-radius: 15px 15px 0 0;
+    height: 30px;
+    animation: lock 2s forwards, spin 2s forwards;
+}
+
+.lock::after {
+    top: -10px;
+    border-right: 5px solid transparent;
+    animation: spin 2s forwards;
+}
+
+</style>
+
+<div class="flex">
+        <div class="lock"></div>
+
+    <div class="d-flex justify-content-center">
+        <div class="message">
+            <h1>Access to this page is restricted</h1>
+            <p>Please check with the site admin if you believe this is a mistake.</p>
+
+            @if (!string.IsNullOrEmpty(Model.RequestId))
+            {
+                <p><strong>Request ID:</strong> <code>@Model.RequestId</code></p>
+            }
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <div class="alert alert-warning text-center" role="alert">
+                    <strong>Error Details:</strong> @Model.Message
+                </div>
+            }
+
+            <button onclick="goBack()" class="btn btn-primary mt-4">Go Back</button>
+        </div>
+    </div>
+</div>
+   
+
+
+<script>
+    function goBack() {
+        if (document.referrer) {
+            window.history.back();
+        } else {
+            window.location.href = '/';
+        }
+    }
+</script>

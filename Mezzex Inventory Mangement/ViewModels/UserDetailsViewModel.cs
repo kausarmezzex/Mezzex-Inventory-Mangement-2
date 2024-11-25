@@ -18,7 +18,15 @@
         public string Gender { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public string? ProfileImageUrl { get; set; }
-        public string? PhoneNumber { get; set; }
+        // Add new properties for companies and selling channels
+        public List<CompanyDetailsViewModel> AssignedCompanies { get; set; } = new List<CompanyDetailsViewModel>();
+        public string? PhoneNumber { get; internal set; }
+    }
+
+    public class CompanyDetailsViewModel
+    {
+        public string CompanyName { get; set; }
+        public List<string> SellingChannels { get; set; } = new List<string>();
     }
 
 }

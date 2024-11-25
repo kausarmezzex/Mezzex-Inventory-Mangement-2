@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,14 +21,14 @@ namespace Mezzex_Inventory_Mangement.Data
             {
                 logger.LogInformation("Starting data seeding...");
 
-                // Seed roles
-                await SeedRolesAsync(roleManager, logger);
+                // Seed roles and pages
+                await SeedRolesAndPagesAsync(context, logger);
 
-                // Seed permissions
-                await SeedPermissionsAsync(context, logger);
+                // Seed users and assign roles
+                await SeedUsersAsync(userManager, roleManager, logger);
 
-                // Seed users and assign roles and permissions
-                await SeedUsersAsync(userManager, roleManager, logger, context);
+                // Assign default access for Administrator role
+                await AssignDefaultAccessToAdministrator(context, logger);
             }
             catch (Exception ex)
             {
@@ -35,73 +36,119 @@ namespace Mezzex_Inventory_Mangement.Data
             }
         }
 
-        private static async Task SeedRolesAsync(RoleManager<ApplicationRole> roleManager, ILogger logger)
+        private static async Task SeedRolesAndPagesAsync(ApplicationDbContext context, ILogger logger)
         {
-            string[] roleNames = { "User", "Admin", "Administrator", "Account" };
-
-            foreach (var roleName in roleNames)
+            using (var scope = context.Database.BeginTransaction())
             {
-                if (!await roleManager.RoleExistsAsync(roleName))
+                try
                 {
-                    var result = await roleManager.CreateAsync(new ApplicationRole { Name = roleName });
-                    if (result.Succeeded)
+                    // Seed roles
+                    if (!context.Roles.Any())
                     {
-                        logger.LogInformation($"Role '{roleName}' created successfully.");
+                        var adminRole = new ApplicationRole { Name = "Admin", CreatedBy = "Seed" };
+                        var userRole = new ApplicationRole { Name = "User", CreatedBy = "Seed" };
+
+                        context.Roles.AddRange(adminRole, userRole);
+                        await context.SaveChangesAsync();
+                        logger.LogInformation("Roles seeded successfully.");
                     }
-                    else
+
+                    // Seed pages
+                    var pages = new List<Page>
+            {
+                // Account pages
+                new Page { Name = "Account - Access Denied", Url = "/Account/AccessDenied" },
+                new Page { Name = "Account - Forgot Password", Url = "/Account/ForgotPassword" },
+                new Page { Name = "Account - Login", Url = "/Account/Login" },
+                new Page { Name = "Account - Logout", Url ="/Account/Logout"},
+                new Page { Name = "Account - Reset Password", Url = "/Account/ResetPassword" },
+                new Page { Name = "Account - Select Company", Url = "/Account/SelectCompany" },
+                new Page { Name = "Account - Verify OTP", Url = "/Account/VerifyOtp" },
+
+                // Home pages
+                new Page { Name = "Home Index", Url = "/Home/Index" },
+                new Page { Name = "Privacy", Url = "/Home/Privacy" },
+
+                // ManageCompanies pages
+                new Page { Name = "Manage Companies - Create", Url = "/ManageCompanies/Create" },
+                new Page { Name = "Manage Companies - Delete", Url = "/ManageCompanies/Delete/*" },
+                new Page { Name = "Manage Companies - Details", Url = "/ManageCompanies/Details/*" },
+                new Page { Name = "Manage Companies - Edit", Url = "/ManageCompanies/Edit/*" },
+                new Page { Name = "Manage Companies - Index", Url = "/ManageCompanies" },
+
+                // PageManagement pages
+                new Page { Name = "Page Management - Create Page", Url = "/PageManagement/CreatePage" },
+                new Page { Name = "Page Management - Index", Url = "/PageManagement" },
+                new Page { Name = "Page Management - Assign Pages To Roles", Url = "/PageManagement/AssignPagesToRoles/*" },
+
+                new Page { Name = "Page Management - Toggle Page Role", Url = "/pagemanagement/TogglePageRoleMapping" },
+                // Roles pages
+                new Page { Name = "Roles - Create", Url = "/Roles/Create" },
+                new Page { Name = "Roles - Delete", Url = "/Roles/Delete/*" },
+                new Page { Name = "Roles - Edit", Url = "/Roles/Edit/*" },
+                new Page { Name = "Roles - Index", Url = "/Roles" },
+
+                // SellingChannels pages
+                new Page { Name = "Selling Channels - Create", Url = "/SellingChannels/Create" },
+                new Page { Name = "Selling Channels - Delete", Url = "/SellingChannels/Delete/*" },
+                new Page { Name = "Selling Channels - Details", Url = "/SellingChannels/Details/*" },
+                new Page { Name = "Selling Channels - Edit", Url = "/SellingChannels/Edit/*" },
+                new Page { Name = "Selling Channels - Index", Url = "/SellingChannels" },
+
+                //Users 
+                new Page { Name = "Users - Create", Url = "/Users/Create" },
+                new Page { Name = "Users - Delete", Url = "/Users/Delete/*" },
+                new Page { Name = "Users - Details", Url = "/Users/Details/*" },
+                new Page { Name = "Users - Edit", Url = "/Users/Edit/*" },
+                new Page { Name = "Users - Index", Url = "/Users" },
+
+                //assignCompany
+
+                new Page { Name = "Assign Company - Create/Delete/Update", Url = "/AssignCompany/AssignCompanyToUser"},
+  /*            new Page { Name = "Assign Company - Delete", Url = "/AssignCompany/Delete/*" },
+                new Page { Name = "Assign Company - Details", Url = "/AssignCompany/Details/*" },
+                new Page { Name = "Assign Company - Edit", Url = "/AssignCompany/Edit/*" },*/
+                new Page { Name = "Assign Company - Index", Url = "/AssignCompany" }
+            };
+
+                    foreach (var page in pages)
                     {
-                        logger.LogError($"Failed to create role '{roleName}': {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                        if (!context.Pages.Any(p => p.Url == page.Url))
+                        {
+                            context.Pages.Add(page);
+                            logger.LogInformation($"Page '{page.Name}' added.");
+                        }
                     }
+
+                    await context.SaveChangesAsync();
+                    logger.LogInformation("Pages seeded successfully.");
+                    await scope.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await scope.RollbackAsync();
+                    logger.LogError($"Error seeding roles and pages: {ex.Message}");
                 }
             }
         }
 
-
-        private static async Task SeedPermissionsAsync(ApplicationDbContext context, ILogger logger)
-        {
-            if (!context.PermissionsName.Any())
-            {
-                var permissions = new[]
-                {
-            new PermissionName { Name = "View", Page = "Users" },
-            new PermissionName { Name = "Add", Page = "Users" },
-            new PermissionName { Name = "Edit", Page = "Users" },
-            new PermissionName { Name = "Delete", Page = "Users" },
-
-            new PermissionName { Name = "View", Page = "Company" },
-            new PermissionName { Name = "Manage", Page = "Company" },
-
-            new PermissionName { Name = "View", Page = "SellingChannel" },
-            new PermissionName { Name = "Manage", Page = "SellingChannel" }
-        };
-
-                await context.PermissionsName.AddRangeAsync(permissions);
-                await context.SaveChangesAsync();
-                logger.LogInformation("Permissions seeded successfully.");
-            }
-        }
-
-
         private static async Task SeedUsersAsync(
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager,
-            ILogger logger,
-            ApplicationDbContext context)
+            ILogger logger)
         {
             await CreateUserAsync(
                 userManager, roleManager, logger,
                 "faizraza349@gmail.com", "Kausar@786",
-                "Admin", "User", "Male", "India", "8052738480", new[] { "Administrator" });
+                "Admin", "User", "Male", "India", "8052738480", new[] { "Admin" });
             await CreateUserAsync(
                 userManager, roleManager, logger,
                 "islam@direct-pharmacy.co.uk", "Sonaislam@143#",
-                "Admin", "User", "Male", "India", "8707681811", new[] { "Administrator" });
+                "Admin", "User", "Male", "India", "8707681811", new[] { "Admin" });
             await CreateUserAsync(
                 userManager, roleManager, logger,
                 "mezzexmaz@gmail.com", "Password123!",
                 "User", "One", "Female", "Country", "0987654321", new[] { "User" });
-
-            await AssignAllPermissionsToAdministrator(userManager, context, logger);
         }
 
         private static async Task CreateUserAsync(
@@ -144,11 +191,6 @@ namespace Mezzex_Inventory_Mangement.Data
                             logger.LogInformation($"Role '{role}' assigned to user '{email}'.");
                         }
                     }
-
-                    if (roles.Contains("Administrator"))
-                    {
-                        await AssignClaimsToUser(userManager, user, new[] { "Manage Company", "Manage Selling Channel", "View Assigned Company", "View Assigned Selling Channel" });
-                    }
                 }
                 else
                 {
@@ -161,29 +203,54 @@ namespace Mezzex_Inventory_Mangement.Data
             }
         }
 
-        private static async Task AssignClaimsToUser(UserManager<ApplicationUser> userManager, ApplicationUser user, string[] permissions)
+        private static async Task AssignDefaultAccessToAdministrator(ApplicationDbContext context, ILogger logger)
         {
-            foreach (var permission in permissions)
+            // Ensure Administrator role exists
+            var administratorRole = context.Roles.FirstOrDefault(r => r.Name == "Administrator");
+            if (administratorRole == null)
             {
-                if (!(await userManager.GetClaimsAsync(user)).Any(c => c.Type == "Permission" && c.Value == permission))
+                logger.LogError("Administrator role not found. Unable to assign default access.");
+                return;
+            }
+
+            // Get all pages
+            var pages = context.Pages.ToList();
+
+            // Assign all pages to the Admin role
+            foreach (var page in pages)
+            {
+                if (!context.PageRoleMappings.Any(prm => prm.RoleId == administratorRole.Id && prm.PageId == page.Id))
                 {
-                    await userManager.AddClaimAsync(user, new System.Security.Claims.Claim("Permission", permission));
+                    context.PageRoleMappings.Add(new PageRoleMapping
+                    {
+                        RoleId = administratorRole.Id,
+                        PageId = page.Id
+                    });
                 }
             }
+
+            // Allow all roles to access Login and Home pages
+            var allRoles = context.Roles.ToList();
+            var publicPages = pages.Where(p => p.Url == "/Account/Login" || p.Url == "/Home" || p.Url == "/Account/Logout" || p.Url == "/Account/ForgotPassword" || p.Url == "/Account/ResetPassword" || p.Url == "/Account/VerifyOtp" || p.Url == "/Account/AccessDenied").ToList();
+
+            foreach (var role in allRoles)
+            {
+                foreach (var page in publicPages)
+                {
+                    if (!context.PageRoleMappings.Any(prm => prm.RoleId == role.Id && prm.PageId == page.Id))
+                    {
+                        context.PageRoleMappings.Add(new PageRoleMapping
+                        {
+                            RoleId = role.Id,
+                            PageId = page.Id
+                        });
+                    }
+                }
+            }
+
+            await context.SaveChangesAsync();
+            logger.LogInformation("Default access assigned to Administrator and public pages.");
         }
 
-        private static async Task AssignAllPermissionsToAdministrator(
-            UserManager<ApplicationUser> userManager,
-            ApplicationDbContext context,
-            ILogger logger)
-        {
-            var administrator = await userManager.FindByEmailAsync("faizraza349@gmail.com");
-            if (administrator != null)
-            {
-                var permissions = context.PermissionsName.Select(p => p.Name).ToArray();
-                await AssignClaimsToUser(userManager, administrator, permissions);
-                logger.LogInformation("All permissions assigned to Administrator.");
-            }
-        }
     }
 }

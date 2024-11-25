@@ -96,6 +96,9 @@ namespace Mezzex_Inventory_Mangement.Models
 
         [StringLength(200)]
         public string BankAddress { get; set; }
+        [Display(Name = "Company Logo")]
+        public string? CompanyLogoUrl { get; set; }
+
 
         // Navigation property for SellingChannels
         public ICollection<SellingChannel> SellingChannels { get; set; } = new List<SellingChannel>();

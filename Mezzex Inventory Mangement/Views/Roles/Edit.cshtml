@@ -1,0 +1,14 @@
+﻿@model Mezzex_Inventory_Mangement.Models.ApplicationRole
+
+<div class="container mt-4">
+    <h1>Edit Role</h1>
+    <form asp-action="Edit">
+        <input type="hidden" name="Id" value="@Model.Id" />
+        <div class="mb-3">
+            <label for="Name" class="form-label">Role Name</label>
+            <input type="text" class="form-control" id="Name" name="Name" value="@Model?.Name" required />
+        </div>
+        <button type="submit" class="btn btn-success">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

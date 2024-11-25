@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Mezzex_Inventory_Mangement.Models.Page>
+
+<h2 class="mt-4 mb-3">Pages</h2>
+<div class="mb-4">
+    <a class="btn btn-primary me-3" asp-action="CreatePage">Create New Page</a>
+    <a class="btn btn-success " asp-action="AssignPagesToRoles">Manage Page-Role Mapping</a>
+</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Page Name</th>
+            <th>URL</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var pages in Model)
+        {
+            <tr>
+                <td>@pages.Id</td>
+                <td>@pages.Name</td>
+                <td>@pages.Url</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

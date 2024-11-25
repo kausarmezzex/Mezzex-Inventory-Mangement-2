@@ -52,7 +52,9 @@
     <!-- Button group for "Add New Company" and "Export to Excel" on the right side -->
     <div class="d-flex">
         <a asp-action="Create" class="btn btn-primary me-2">Add New Selling Channel</a>
-        <a asp-controller="SellingChannels" asp-action="ExportToExcel" class="btn btn-info">Export to Excel</a>
+        <a asp-controller="SellingChannels" asp-action="ExportToExcel" class="btn btn-info">
+            <i class="bi bi-file-earmark-excel"></i> Export to Excel
+        </a>
     </div>
 
 </div>

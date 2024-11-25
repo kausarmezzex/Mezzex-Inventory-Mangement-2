@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Mezzex_Inventory_Mangement.ViewModels;
+using Mezzex_Inventory_Mangement.Data;
+using OfficeOpenXml.Style;
+using OfficeOpenXml;
 
 namespace Mezzex_Inventory_Mangement.Controllers
 {
@@ -13,11 +16,13 @@ namespace Mezzex_Inventory_Mangement.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly ApplicationDbContext _context;
 
-        public UsersController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+        public UsersController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ApplicationDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            this._context = context;
         }
 
         // GET: Users
@@ -322,6 +327,7 @@ namespace Mezzex_Inventory_Mangement.Controllers
         // GET: Users/Details/5
         public async Task<IActionResult> Details(int id)
         {
+           
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
             {
@@ -330,7 +336,6 @@ namespace Mezzex_Inventory_Mangement.Controllers
             }
 
             var roles = await _userManager.GetRolesAsync(user);
-            var userPermissions = user.UserPermissions?.Select(p => p.Permission.Name).ToList();
 
             var userDetailsViewModel = new UserDetailsViewModel
             {
@@ -341,7 +346,6 @@ namespace Mezzex_Inventory_Mangement.Controllers
                 Active = user.Active,
                 CountryName = user.CountryName,
                 Roles = roles.ToList(),
-                Permissions = userPermissions,
                 CreatedBy = user.CreatedBy,
                 CreatedOn = user.CreatedOn,
                 ModifiedBy = user.ModifiedBy,
@@ -354,7 +358,108 @@ namespace Mezzex_Inventory_Mangement.Controllers
 
             return View(userDetailsViewModel);
         }
+        public async Task<IActionResult> ExportToExcel()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
+            // Fetch User and Assignment data
+            var userAssignments = await _context.UserCompanyAssignments
+                .Include(uca => uca.Company)
+                    .ThenInclude(company => company.SellingChannels) // Include SellingChannels
+                .Include(uca => uca.User) // Include User details
+                .ToListAsync();
+
+            var users = await _userManager.Users.ToListAsync();
+
+            var userDetails = users.GroupJoin(
+                userAssignments,
+                u => u.Id,
+                ua => ua.UserId,
+                (user, assignments) => new UserDetailsViewModel
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Active = user.Active,
+                    CountryName = user.CountryName,
+                    Roles = _userManager.GetRolesAsync(user).Result.ToList(),
+                    CreatedBy = user.CreatedBy,
+                    CreatedOn = user.CreatedOn,
+                    ModifiedBy = user.ModifiedBy,
+                    ModifiedOn = user.ModifiedOn,
+                    Gender = user.Gender,
+                    DateOfBirth = user.DateOfBirth,
+                    PhoneNumber = user.PhoneNumber,
+                    ProfileImageUrl = user.ProfileImageUrl,
+                    AssignedCompanies = assignments.Select(ua => new CompanyDetailsViewModel
+                    {
+                        CompanyName = ua.Company?.CompanyName ?? "N/A",
+                        SellingChannels = ua.Company?.SellingChannels?.Select(sc => sc.SellingChannelName).ToList()
+                                      ?? new List<string>()
+                    }).ToList()
+                }).ToList();
+
+            // Generate Excel
+            using (var package = new ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Users");
+
+                // Add headers
+                var headers = new[]
+                {
+            "Id", "First Name", "Last Name", "Email", "Active", "Country Name", "Roles",
+            "Created By", "Created On", "Modified By", "Modified On", "Gender",
+            "Date of Birth", "ProfileImageUrl", "Phone Number", "Company Details"
+        };
+
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    worksheet.Cells[1, i + 1].Value = headers[i];
+                    worksheet.Cells[1, i + 1].Style.Font.Bold = true;
+                    worksheet.Cells[1, i + 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                }
+
+                // Add user data
+                for (int i = 0; i < userDetails.Count; i++)
+                {
+                    var user = userDetails[i];
+                    var row = i + 2;
+
+                    worksheet.Cells[row, 1].Value = user.Id;
+                    worksheet.Cells[row, 2].Value = user.FirstName;
+                    worksheet.Cells[row, 3].Value = user.LastName;
+                    worksheet.Cells[row, 4].Value = user.Email;
+                    worksheet.Cells[row, 5].Value = user.Active ? "Active" : "Inactive";
+                    worksheet.Cells[row, 6].Value = user.CountryName;
+                    worksheet.Cells[row, 7].Value = string.Join(", ", user.Roles);
+                    worksheet.Cells[row, 8].Value = user.CreatedBy;
+                    worksheet.Cells[row, 9].Value = user.CreatedOn?.ToString("yyyy-MM-dd");
+                    worksheet.Cells[row, 10].Value = user.ModifiedBy;
+                    worksheet.Cells[row, 11].Value = user.ModifiedOn?.ToString("yyyy-MM-dd");
+                    worksheet.Cells[row, 12].Value = user.Gender;
+                    worksheet.Cells[row, 13].Value = user.DateOfBirth?.ToString("yyyy-MM-dd");
+                    worksheet.Cells[row, 14].Value = user.ProfileImageUrl;
+                    worksheet.Cells[row, 15].Value = user.PhoneNumber;
+
+                    // Company Details
+                    worksheet.Cells[row, 16].Value = string.Join("; ",
+                        user.AssignedCompanies.Select(c =>
+                            $"{c.CompanyName} ({string.Join(", ", c.SellingChannels)})"));
+                }
+
+                // Auto-fit columns
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                // Return file
+                var stream = new MemoryStream();
+                package.SaveAs(stream);
+                stream.Position = 0;
+
+                var fileName = $"Users_{DateTime.UtcNow:yyyyMMdd_HHmmss}.xlsx";
+                return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
 
     }
 }

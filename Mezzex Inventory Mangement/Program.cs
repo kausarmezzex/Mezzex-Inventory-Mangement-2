@@ -1,4 +1,5 @@
 using Mezzex_Inventory_Mangement.Data;
+using Mezzex_Inventory_Mangement.Middleware;
 using Mezzex_Inventory_Mangement.Models;
 using Mezzex_Inventory_Mangement.Services;
 using Microsoft.AspNetCore.Identity;
@@ -44,8 +45,8 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddScoped<SellingChannelService>();
 builder.Services.AddScoped<ManageCompanyService>();
 builder.Services.AddScoped<EmailService>();
-builder.Services.AddScoped<UserCompanyService>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<RolePermissionService>();
 
 builder.Services.AddSession(options =>
 {
@@ -79,8 +80,9 @@ using (var scope = app.Services.CreateScope())
     {
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
-
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         logger.LogInformation("Seeding data...");
+
         await SeedData.Initialize(services, userManager);
         logger.LogInformation("Seeding data completed.");
     }
@@ -101,9 +103,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseMiddleware<RoleBasedAccessMiddleware>();
 app.MapGet("/", context =>
 {
     context.Response.Redirect("/Account/Login");

@@ -10,6 +10,7 @@ using Mezzex_Inventory_Mangement.Data;
 
 namespace Mezzex_Inventory_Mangement.Controllers
 {
+    [AllowAnonymous]
     public class AccountController : Controller
     {
         private readonly SignInManager<ApplicationUser> _signInManager;

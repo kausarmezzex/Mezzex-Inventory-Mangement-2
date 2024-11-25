@@ -1,0 +1,11 @@
+﻿@model Mezzex_Inventory_Mangement.Models.ApplicationRole
+
+<div class="container mt-4">
+    <h1>Delete Role</h1>
+    <p>Are you sure you want to delete the role "<strong>@Model.Name</strong>"?</p>
+    <form asp-action="Delete" method="post">
+        <input type="hidden" name="Id" value="@Model.Id" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

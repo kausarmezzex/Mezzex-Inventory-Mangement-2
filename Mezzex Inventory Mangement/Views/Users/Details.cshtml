@@ -5,7 +5,7 @@
 }
 
 <div class="container mt-5">
-    <div class="card shadow-lg border-0 mx-auto" style="max-width: 950px; border-radius: 12px;">
+    <div class="card shadow-lg border-0 mx-auto" style="max-width: 1000px; border-radius: 12px;">
         <!-- Card Header -->
         <div class="card-header bg-gradient-primary text-black text-center" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
             <h3 class="mb-0 fw-bold">@Model.FirstName @Model.LastName</h3>
@@ -14,7 +14,7 @@
         <!-- Profile Section -->
         <div class="row g-0">
             <!-- Left Column: Profile Image -->
-            <div class="col-md-3 text-center bg-light d-flex flex-column align-items-center justify-content-center p-4" style="border-bottom-left-radius: 12px;">
+            <div class="col-md-3 text-center bg-light d-flex flex-column align-items-center justify-content-center p-3" style="border-bottom-left-radius: 12px;">
                 @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
                 {
                     <img src="@Model.ProfileImageUrl"
@@ -47,7 +47,7 @@
 
             <!-- Right Column: User Information -->
             <div class="col-md-9">
-                <div class="card-body p-4">
+                <div class="card-body p-3">
                     <h5 class="text-primary mb-4"><i class="bi bi-info-circle"></i> User Information</h5>
                     <div class="row">
                         <!-- First Column of Details -->

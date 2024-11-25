@@ -12,14 +12,14 @@
 
     /* Compact table style */
     .compact-table {
-        font-size: 0.9em; /* Slightly smaller font */
+        font-size: 0.8em; /* Slightly smaller font */
         white-space: nowrap; /* Prevent wrapping in table cells */
     }
 
         /* Reduce padding in table cells */
         .compact-table th,
         .compact-table td {
-            padding: 8px;
+            padding: 6px;
             vertical-align: middle;
         }
 
@@ -53,9 +53,12 @@
     <div class="flex-grow-1 me-3">
         @await Html.PartialAsync("_AlertMessages")
     </div>
-
+    
     <!-- Button group -->
     <div class="d-flex">
+        <a asp-action="ExportToExcel" class="btn btn-info me-2">
+            <i class="bi bi-file-earmark-excel"></i> Export to Excel
+        </a>
         <a asp-action="Create" class="btn btn-primary me-2">Add New User</a>
     </div>
 </div>

@@ -1,0 +1,75 @@
+﻿@model Mezzex_Inventory_Mangement.ViewModels.AssignPagesToRolesViewModel
+
+<h2>Assign Pages to Roles</h2>
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Page Name</th>
+                @foreach (var role in Model.Roles)
+                {
+                    <th>@role.Name</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pages in Model.Pages)
+            {
+                <tr>
+                    <td>@pages.Name</td>
+                    @foreach (var role in Model.Roles)
+                    {
+                        var isChecked = Model.PageRoleMappings.Any(m => m.PageId == pages.Id && m.RoleId == role.Id);
+                        <td class="text-center">
+                            <input 
+                                type="checkbox" 
+                                class="role-page-checkbox" 
+                                data-page-id="@pages.Id" 
+@using Mezzex_Inventory_Mangement.ViewModels
+                                data-role-id="@role.Id" 
+                                @(isChecked ? "checked" : "") />
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<button id="exportExcel" class="btn btn-success">Export to Excel</button>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Handle checkbox click
+            $('.role-page-checkbox').change(function () {
+                var pageId = $(this).data('page-id');
+                var roleId = $(this).data('role-id');
+                var isAssigned = $(this).is(':checked');
+
+                // AJAX request to toggle the mapping
+                $.ajax({
+                    url: '@Url.Action("TogglePageRoleMapping", "PageManagement")',
+                    type: 'POST',
+                    data: {
+                        pageId: pageId,
+                        roleId: roleId,
+                        isAssigned: isAssigned
+                    },
+                    success: function (response) {
+                        if (!response.success) {
+                            alert('Failed to update mapping. Please try again.');
+                        }
+                    },
+                    error: function () {
+                        alert('An error occurred while processing the request.');
+                    }
+                });
+            });
+
+            // Export to Excel logic (placeholder)
+            $('#exportExcel').click(function () {
+                alert('Export to Excel functionality can be implemented here.');
+            });
+        });
+    </script>
+}

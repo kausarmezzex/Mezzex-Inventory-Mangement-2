@@ -1,0 +1,16 @@
+﻿@model Mezzex_Inventory_Mangement.Models.Page
+
+<h2>Create Page</h2>
+
+<form asp-action="CreatePage" method="post">
+    <div class="form-group">
+        <label for="Name">Page Name</label>
+        <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter page name" required />
+    </div>
+    <div class="form-group">
+        <label for="Url">Page URL</label>
+        <input type="text" class="form-control" id="Url" name="Url" placeholder="Enter page URL" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a class="btn btn-secondary" asp-action="Index">Back to Pages</a>
+</form>

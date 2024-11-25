@@ -6,8 +6,6 @@ namespace Mezzex_Inventory_Mangement.ViewModels
     {
         public int RoleId { get; set; }
         public string RoleName { get; set; }
-        public List<PermissionAssignment> Permissions { get; set; } = new List<PermissionAssignment>();
-        public List<UserAssignment> Users { get; set; } = new List<UserAssignment>();
     }
 
 }
