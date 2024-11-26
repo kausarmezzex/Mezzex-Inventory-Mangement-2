@@ -74,41 +74,40 @@ namespace Mezzex_Inventory_Mangement.Data
                 new Page { Name = "Manage Companies - Delete", Url = "/ManageCompanies/Delete/*" },
                 new Page { Name = "Manage Companies - Details", Url = "/ManageCompanies/Details/*" },
                 new Page { Name = "Manage Companies - Edit", Url = "/ManageCompanies/Edit/*" },
-                new Page { Name = "Manage Companies - Index", Url = "/ManageCompanies" },
+                new Page { Name = "Manage Companies - Company List", Url = "/ManageCompanies" },
 
                 // PageManagement pages
                 new Page { Name = "Page Management - Create Page", Url = "/PageManagement/CreatePage" },
-                new Page { Name = "Page Management - Index", Url = "/PageManagement" },
-                new Page { Name = "Page Management - Assign Pages To Roles", Url = "/PageManagement/AssignPagesToRoles/*" },
-
-                new Page { Name = "Page Management - Toggle Page Role", Url = "/pagemanagement/TogglePageRoleMapping" },
+                new Page { Name = "Page Management - Page List", Url = "/PageManagement" },
+                new Page { Name = "Page Management - Assign Pages To Roles ", Url = "/PageManagement/SavePageAssignments" },
+                new Page { Name = "Page Management - Page Assign List", Url = "/PageManagement/AssignPagesToRoles" },
                 // Roles pages
                 new Page { Name = "Roles - Create", Url = "/Roles/Create" },
                 new Page { Name = "Roles - Delete", Url = "/Roles/Delete/*" },
                 new Page { Name = "Roles - Edit", Url = "/Roles/Edit/*" },
-                new Page { Name = "Roles - Index", Url = "/Roles" },
+                new Page { Name = "Roles - Roles List", Url = "/Roles" },
 
                 // SellingChannels pages
                 new Page { Name = "Selling Channels - Create", Url = "/SellingChannels/Create" },
                 new Page { Name = "Selling Channels - Delete", Url = "/SellingChannels/Delete/*" },
                 new Page { Name = "Selling Channels - Details", Url = "/SellingChannels/Details/*" },
                 new Page { Name = "Selling Channels - Edit", Url = "/SellingChannels/Edit/*" },
-                new Page { Name = "Selling Channels - Index", Url = "/SellingChannels" },
+                new Page { Name = "Selling Channels - Selling Channel List", Url = "/SellingChannels" },
 
                 //Users 
                 new Page { Name = "Users - Create", Url = "/Users/Create" },
                 new Page { Name = "Users - Delete", Url = "/Users/Delete/*" },
                 new Page { Name = "Users - Details", Url = "/Users/Details/*" },
                 new Page { Name = "Users - Edit", Url = "/Users/Edit/*" },
-                new Page { Name = "Users - Index", Url = "/Users" },
+                new Page { Name = "Users - Users List", Url = "/Users" },
 
                 //assignCompany
 
-                new Page { Name = "Assign Company - Create/Delete/Update", Url = "/AssignCompany/AssignCompanyToUser"},
-  /*            new Page { Name = "Assign Company - Delete", Url = "/AssignCompany/Delete/*" },
-                new Page { Name = "Assign Company - Details", Url = "/AssignCompany/Details/*" },
-                new Page { Name = "Assign Company - Edit", Url = "/AssignCompany/Edit/*" },*/
-                new Page { Name = "Assign Company - Index", Url = "/AssignCompany" }
+                new Page { Name = "Assign Company - AssignCompanyToUsers/Edit", Url = "/AssignCompany/AssignCompanyToUser"},
+  /*            new Page { Name = "Assign Company - Delete", Url = "/AssignCompany/Delete/*" },*/
+                new Page { Name = "Assign Company - Get Details By Id", Url = "/AssignCompany/GetAssignmentDetailsByUserId" },
+                new Page { Name = "Assign Company - Get All Details", Url = "/AssignCompany/AssignmentDetails"},
+                new Page { Name = "Assign Company - Assign Company List", Url = "/AssignCompany" }
             };
 
                     foreach (var page in pages)
@@ -202,7 +201,7 @@ namespace Mezzex_Inventory_Mangement.Data
                 logger.LogInformation($"User '{email}' already exists.");
             }
         }
-
+       
         private static async Task AssignDefaultAccessToAdministrator(ApplicationDbContext context, ILogger logger)
         {
             // Ensure Administrator role exists
@@ -250,6 +249,39 @@ namespace Mezzex_Inventory_Mangement.Data
 
             await context.SaveChangesAsync();
             logger.LogInformation("Default access assigned to Administrator and public pages.");
+
+            if (!allRoles.Any())
+            {
+                logger.LogError("No roles found in the database.");
+                return;
+            }
+
+            // Identify Account, Home, and Privacy-related pages
+            var freeAccessPages = pages.Where(p =>
+                p.Url.StartsWith("/Account") ||  // All Account-related pages
+                p.Url.StartsWith("/Home") ||    // All Home-related pages
+                p.Url == "/Home/Privacy"        // Privacy page
+            ).ToList();
+
+            // Assign free access pages to all roles
+            foreach (var role in allRoles)
+            {
+                foreach (var page in freeAccessPages)
+                {
+                    if (!context.PageRoleMappings.Any(prm => prm.RoleId == role.Id && prm.PageId == page.Id))
+                    {
+                        context.PageRoleMappings.Add(new PageRoleMapping
+                        {
+                            RoleId = role.Id,
+                            PageId = page.Id
+                        });
+                    }
+                }
+            }
+
+            // Save all changes to the database
+            await context.SaveChangesAsync();
+            logger.LogInformation("Default access assigned to Account, Home, and Privacy pages for all roles.");
         }
 
     }

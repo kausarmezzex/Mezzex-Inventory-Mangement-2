@@ -9,6 +9,7 @@ using Mezzex_Inventory_Mangement.ViewModels;
 using Mezzex_Inventory_Mangement.Data;
 using OfficeOpenXml.Style;
 using OfficeOpenXml;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Mezzex_Inventory_Mangement.Controllers
 {
@@ -57,19 +58,85 @@ namespace Mezzex_Inventory_Mangement.Controllers
         // GET: Users/Create
         public async Task<IActionResult> Create()
         {
-            ViewBag.Roles = await _roleManager.Roles.ToListAsync();
+            var user = await _userManager.GetUserAsync(User); // Get the logged-in user
+            var userRoleIds = await _context.UserRoles
+                .Where(ur => ur.UserId == user.Id)
+                .Select(ur => ur.RoleId)
+                .ToListAsync();
+
+            // Get the roles of the logged-in user
+            var userRoles = await _roleManager.Roles
+                .Where(r => userRoleIds.Contains(r.Id))
+                .ToListAsync();
+
+            // Determine the highest role of the logged-in user
+            var isAdministrator = userRoles.Any(r => r.Name == "Administrator");
+            var isAdmin = userRoles.Any(r => r.Name == "Admin");
+
+            // Fetch roles based on hierarchy
+            List<ApplicationRole> roles; // Change type to match ApplicationRole
+            if (isAdministrator)
+            {
+                // If the user is Administrator, they can see and assign all roles
+                roles = await _roleManager.Roles.ToListAsync();
+            }
+            else if (isAdmin)
+            {
+                // If the user is Admin, exclude the Administrator role
+                roles = await _roleManager.Roles
+                    .Where(r => r.Name != "Administrator")
+                    .ToListAsync();
+            }
+            else
+            {
+                // Otherwise, restrict to roles below the user's role (if hierarchy applies)
+                roles = await _roleManager.Roles
+                    .Where(r => r.Name != "Administrator" && r.Name != "Admin")
+                    .ToListAsync();
+            }
+
+            ViewBag.Roles = roles;
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ApplicationUser model, string password, List<string> selectedRoles, IFormFile profileImage)
         {
             var currentUser = await _userManager.GetUserAsync(User);
-            var currentUserName = $"{currentUser.FirstName} {currentUser.LastName}";
+            var currentUserRoles = await _userManager.GetRolesAsync(currentUser);
 
             if (ModelState.IsValid)
             {
+                // 2. Validate that the user can only assign roles they are allowed to manage
+                if (currentUserRoles.Contains("Admin"))
+                {
+                    // Admin can only assign "Admin" or roles below it
+                    var allowedRoles = await _roleManager.Roles
+                        .Where(r => r.Name == "Admin" || r.Name != "Administrator") // Filter roles Admin can assign
+                        .Select(r => r.Name)
+                        .ToListAsync();
+
+                    if (selectedRoles.Any(role => !allowedRoles.Contains(role)))
+                    {
+                        ModelState.AddModelError("", "You cannot assign roles higher than your access level.");
+                        ViewBag.Roles = allowedRoles;
+                        return View(model);
+                    }
+                }
+                else if (currentUserRoles.Contains("Administrator"))
+                {
+                    // Administrator can assign any role (but logic can be adjusted if necessary)
+                    var allowedRoles = await _roleManager.Roles.ToListAsync();
+                    ViewBag.Roles = allowedRoles;
+                }
+                else
+                {
+                    // Unauthorized user, just in case
+                    return Forbid();
+                }
+
                 // Check if the phone number already exists
                 var existingUser = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == model.PhoneNumber);
                 if (existingUser != null)
@@ -127,10 +194,10 @@ namespace Mezzex_Inventory_Mangement.Controllers
                     Active = model.Active,
                     CountryName = model.CountryName,
                     CreatedOn = DateTime.Now,
-                    CreatedBy = currentUserName,
+                    CreatedBy = $"{currentUser.FirstName} {currentUser.LastName}",
                     PhoneNumber = model.PhoneNumber,
-                    DateOfBirth = model.DateOfBirth, // Add DateOfBirth here 
-                    ProfileImageUrl = imageUrl // Save uploaded image URL
+                    DateOfBirth = model.DateOfBirth,
+                    ProfileImageUrl = imageUrl
                 };
 
                 // Create the user in the Identity system
@@ -153,15 +220,18 @@ namespace Mezzex_Inventory_Mangement.Controllers
                 // Handle errors during user creation
                 foreach (var error in result.Errors)
                 {
-                    TempData["ErrorMessage"] = "Error occurred while creating the User.";
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
 
             // Return the view with roles if something went wrong
-            ViewBag.Roles = await _roleManager.Roles.ToListAsync();
+            ViewBag.Roles = currentUserRoles.Contains("Admin")
+                ? await _roleManager.Roles.Where(r => r.Name == "Admin" || r.Name != "Administrator").ToListAsync()
+                : await _roleManager.Roles.ToListAsync();
+
             return View(model);
         }
+
 
         // Helper class to handle the image upload API response
         public class UploadResponse
@@ -180,7 +250,44 @@ namespace Mezzex_Inventory_Mangement.Controllers
 
             var userRoles = await _userManager.GetRolesAsync(user);
 
-            ViewBag.Roles = await _roleManager.Roles.ToListAsync();
+            var currentuser = await _userManager.GetUserAsync(User); // Get the logged-in user
+            var userRoleIds = await _context.UserRoles
+                .Where(ur => ur.UserId == user.Id)
+                .Select(ur => ur.RoleId)
+                .ToListAsync();
+
+            // Get the roles of the logged-in user
+            var CurrentuserRoles = await _roleManager.Roles
+                .Where(r => userRoleIds.Contains(r.Id))
+                .ToListAsync();
+
+            // Determine the highest role of the logged-in user
+            var isAdministrator = CurrentuserRoles.Any(r => r.Name == "Administrator");
+            var isAdmin = CurrentuserRoles.Any(r => r.Name == "Admin");
+
+            // Fetch roles based on hierarchy
+            List<ApplicationRole> roles; // Change type to match ApplicationRole
+            if (isAdministrator)
+            {
+                // If the user is Administrator, they can see and assign all roles
+                roles = await _roleManager.Roles.ToListAsync();
+            }
+            else if (isAdmin)
+            {
+                // If the user is Admin, exclude the Administrator role
+                roles = await _roleManager.Roles
+                    .Where(r => r.Name != "Administrator")
+                    .ToListAsync();
+            }
+            else
+            {
+                // Otherwise, restrict to roles below the user's role (if hierarchy applies)
+                roles = await _roleManager.Roles
+                    .Where(r => r.Name != "Administrator" && r.Name != "Admin")
+                    .ToListAsync();
+            }
+
+            ViewBag.Roles = roles;
             ViewBag.UserRoles = userRoles;
 
             return View(user);
@@ -192,6 +299,8 @@ namespace Mezzex_Inventory_Mangement.Controllers
         {
             ModelState.Remove("profileImage"); // Optional fields
             var user = await _userManager.FindByIdAsync(id.ToString());
+            var currentUser = await _userManager.GetUserAsync(User);
+            var currentUserName = $"{currentUser.FirstName} {currentUser.LastName}";
             if (id != model.Id)
             {
                 TempData["ErrorMessage"] = "User not found.";
@@ -226,7 +335,7 @@ namespace Mezzex_Inventory_Mangement.Controllers
                 user.Gender = model.Gender;
                 user.Active = model.Active;
                 user.CountryName = model.CountryName;
-                user.ModifiedBy = $"{User.Identity.Name}";
+                user.ModifiedBy = currentUserName;
                 user.ModifiedOn = DateTime.UtcNow;
                 user.DateOfBirth = model.DateOfBirth;
                 // Profile Image Upload Logic

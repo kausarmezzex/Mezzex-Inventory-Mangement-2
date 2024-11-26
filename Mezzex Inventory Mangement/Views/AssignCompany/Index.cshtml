@@ -2,72 +2,72 @@
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css" rel="stylesheet" />
 
-<style>
-    .table-responsive, #assignTable {
-        margin: 0;
-        padding: 0;
-    }
+ <style>
+     .table-responsive, #assignTable {
+         margin: 0;
+         padding: 0;
+     }
 
-    .table-responsive {
-        overflow-x: auto;
-        max-width: 100%;
-    }
+     .table-responsive {
+         overflow-x: auto;
+         max-width: 100%;
+     }
 
-    .compact-table {
-        font-size: 0.9em;
-        white-space: nowrap;
-    }
+     .compact-table {
+         font-size: 0.9em;
+         white-space: nowrap;
+     }
 
-        .compact-table th, .compact-table td {
-            padding: 8px;
-        }
+         .compact-table th, .compact-table td {
+             padding: 8px;
+         }
 
-    .btn-action {
-        font-size: 0.85em;
-    }
+     .btn-action {
+         font-size: 0.85em;
+     }
 
-    .search-input {
-        width: 100%;
-        max-width: 300px;
-        padding: 7px 23px;
-        border: 1px solid #ced4da;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
+     .search-input {
+         width: 100%;
+         max-width: 300px;
+         padding: 7px 23px;
+         border: 1px solid #ced4da;
+         border-radius: 8px;
+         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+     }
 
-    .user-details-link {
-        text-decoration: none;
-        color: inherit;
-        cursor: pointer;
-    }
+     .user-details-link {
+         text-decoration: none;
+         color: inherit;
+         cursor: pointer;
+     }
 
-    .modal-xl {
-        max-width: 1170px;
-    }
+     .modal-xl {
+         max-width: 1170px;
+     }
 
-    .selling-channel-dropdown {
-        width: 160px !important;
-        margin-right: 8px;
-    }
+     .selling-channel-dropdown {
+         width: 160px !important;
+         margin-right: 8px;
+     }
 
-    .form-check {
-        display: flex;
-        align-items: center;
-        margin-left: 5px;
-    }
+     .form-check {
+         display: flex;
+         align-items: center;
+         margin-left: 5px;
+     }
 
-    .selected-channels {
-        margin-top: 5px;
-        font-size: 0.85em;
-        color: #6c757d;
-        max-width: 180px;
-        word-wrap: break-word;
-    }
+     .selected-channels {
+         margin-top: 5px;
+         font-size: 0.85em;
+         color: #6c757d;
+         max-width: 180px;
+         word-wrap: break-word;
+     }
 
-    .small, small {
-        font-size: 88%;
-        font-weight: 410;
-</style>
+     .small, small {
+         font-size: 88%;
+         font-weight: 410;
+ </style>
 
 <div>
     <h2 class="text-center my-3">Assign Companies to Users</h2>
@@ -79,9 +79,14 @@
         </div>
 
         <div class="d-flex">
-            <button type="submit" class="btn btn-primary me-2" form="assignForm">Assign</button>
-            <button type="button" id="exportToExcel" class="btn btn-info text-black"> <i class="bi bi-file-earmark-excel"></i> Export to Excel</button>
+            <button type="submit" class="btn btn-primary me-2" form="assignForm">
+                <i class="bi bi-check-circle"></i> Assign
+            </button>
+            <button type="button" id="exportToExcel" class="btn btn-info text-black">
+                <i class="bi bi-file-earmark-excel"></i> Export to Excel
+            </button>
         </div>
+
     </div>
 </div>
 
@@ -197,7 +202,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">User Assignment Details</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-dismiss="modal">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+
             </div>
             <div class="modal-body" id="userDetailsContent"></div>
         </div>

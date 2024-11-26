@@ -60,22 +60,26 @@
         <a asp-action="ExportToExcel" class="btn btn-info me-2">
             <i class="bi bi-file-earmark-excel"></i> Export to Excel
         </a>
-        <a asp-action="Create" class="btn btn-primary">Create New Role</a>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create New Role
+        </a>
     </div>
+
 </div>
 
 <div class="table-responsive">
     <table class="table table-striped table-hover compact-table" id="roleTable">
         <thead class="table-dark">
             <tr>
-                <th>Role Name</th>
-                <th>Created On</th>
-                <th>Created By</th>
-                <th>Modified On</th>
-                <th>Modified By</th>
-                <th>Actions</th>
+                <th><i class="bi bi-person-gear"></i> Role Name</th>
+                <th><i class="bi bi-calendar-event"></i> Created On</th>
+                <th><i class="bi bi-person"></i> Created By</th>
+                <th><i class="bi bi-calendar2"></i> Modified On</th>
+                <th><i class="bi bi-person-bounding-box"></i> Modified By</th>
+                <th><i class="bi bi-tools"></i> Actions</th>
             </tr>
         </thead>
+
         <tbody>
             @foreach (var role in Model)
             {
@@ -86,9 +90,14 @@
                     <td>@role.ModifiedOn?.ToString("yyyy-MM-dd")</td>
                     <td>@role.ModifiedBy</td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@role.Id" class="btn btn-warning btn-sm btn-action">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@role.Id" class="btn btn-danger btn-sm btn-action">Delete</a>
+                        <a asp-action="Edit" asp-route-id="@role.Id" class="btn btn-warning btn-sm btn-action">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@role.Id" class="btn btn-danger btn-sm btn-action">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
                     </td>
+
                 </tr>
             }
         </tbody>
