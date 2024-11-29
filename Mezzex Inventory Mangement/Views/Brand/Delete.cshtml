@@ -1,0 +1,28 @@
+﻿@model Mezzex_Inventory_Mangement.Models.Brand
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-danger text-white rounded-top-4">
+                    <h3 class="card-title text-center mb-0">Delete Brand</h3>
+                </div>
+                <div class="card-body bg-light rounded-bottom-4">
+                    <p>Are you sure you want to delete the brand: <strong>@Model.BrandName</strong>?</p>
+
+                    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="bi bi-trash me-2"></i> Delete
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary btn-lg">
+                                <i class="bi bi-arrow-left me-2"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

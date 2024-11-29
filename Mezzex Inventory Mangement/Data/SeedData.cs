@@ -47,8 +47,9 @@ namespace Mezzex_Inventory_Mangement.Data
                     {
                         var adminRole = new ApplicationRole { Name = "Admin", CreatedBy = "Seed" };
                         var userRole = new ApplicationRole { Name = "User", CreatedBy = "Seed" };
+                        var administratorRole = new ApplicationRole { Name = "Administrator", CreatedBy = "Seed" };
 
-                        context.Roles.AddRange(adminRole, userRole);
+                        context.Roles.AddRange(adminRole, userRole, administratorRole);
                         await context.SaveChangesAsync();
                         logger.LogInformation("Roles seeded successfully.");
                     }
@@ -107,7 +108,21 @@ namespace Mezzex_Inventory_Mangement.Data
   /*            new Page { Name = "Assign Company - Delete", Url = "/AssignCompany/Delete/*" },*/
                 new Page { Name = "Assign Company - Get Details By Id", Url = "/AssignCompany/GetAssignmentDetailsByUserId" },
                 new Page { Name = "Assign Company - Get All Details", Url = "/AssignCompany/AssignmentDetails"},
-                new Page { Name = "Assign Company - Assign Company List", Url = "/AssignCompany" }
+                new Page { Name = "Assign Company - Assign Company List", Url = "/AssignCompany" },
+
+                // Category 
+                new Page {Name = "Category - Create" , Url = "/Category/Create"},
+                new Page {Name = "Category - List" , Url = "/Category"},
+                new Page {Name = "Category - Edit", Url ="/Category/Edit/*"},
+                new Page {Name = "Category - Deletem ", Url ="/Category/Delete/*"},
+
+                 // Brand
+                new Page {Name = "Brand - Create" , Url = "/Brand/Create"},
+                new Page {Name = "Brand - List" , Url = "/Brand"},
+                new Page {Name = "Brand - Edit", Url ="/Brand/Edit/*"},
+                new Page {Name = "Brand - Deletem ", Url ="/Brand/Delete/*"},
+                new Page {Name = "Brand - Details ", Url ="/Brand/Details/*"},
+                new Page {Name = "Brand - Block Companies ", Url ="/Brand/BlockCompanies"}
             };
 
                     foreach (var page in pages)
@@ -139,15 +154,15 @@ namespace Mezzex_Inventory_Mangement.Data
             await CreateUserAsync(
                 userManager, roleManager, logger,
                 "faizraza349@gmail.com", "Kausar@786",
-                "Admin", "User", "Male", "India", "8052738480", new[] { "Admin" });
+                "Kausar", "Raza", "Male", "India", "8052738480", new[] { "Admin" });
             await CreateUserAsync(
                 userManager, roleManager, logger,
                 "islam@direct-pharmacy.co.uk", "Sonaislam@143#",
-                "Admin", "User", "Male", "India", "8707681811", new[] { "Admin" });
+                "Islam", "Saifi", "Male", "India", "8707681811", new[] { "Administrator" });
             await CreateUserAsync(
                 userManager, roleManager, logger,
                 "mezzexmaz@gmail.com", "Password123!",
-                "User", "One", "Female", "Country", "0987654321", new[] { "User" });
+                "Faiz", "Raza", "Female", "Country", "0987654321", new[] { "User" });
         }
 
         private static async Task CreateUserAsync(
@@ -282,6 +297,7 @@ namespace Mezzex_Inventory_Mangement.Data
             // Save all changes to the database
             await context.SaveChangesAsync();
             logger.LogInformation("Default access assigned to Account, Home, and Privacy pages for all roles.");
+
         }
 
     }

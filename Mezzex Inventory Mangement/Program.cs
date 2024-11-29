@@ -27,17 +27,6 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 .AddRoles<ApplicationRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("CanManageCompany", policy =>
-        policy.RequireClaim("Permission", "Manage Company"));
-    options.AddPolicy("CanViewAssignedCompany", policy =>
-        policy.RequireClaim("Permission", "View Assigned Company"));
-    options.AddPolicy("CanManageSellingChannel", policy =>
-        policy.RequireClaim("Permission", "Manage Selling Channel"));
-    options.AddPolicy("CanViewAssignedSellingChannel", policy =>
-        policy.RequireClaim("Permission", "View Assigned Selling Channel"));
-});
 
 // Configure session services (if needed)
 builder.Services.AddDistributedMemoryCache();
@@ -47,7 +36,8 @@ builder.Services.AddScoped<ManageCompanyService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<RolePermissionService>();
-
+builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<BrandService>();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(20); // Adjust as needed

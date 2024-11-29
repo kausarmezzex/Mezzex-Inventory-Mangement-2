@@ -1,0 +1,162 @@
+﻿@model Mezzex_Inventory_Mangement.Models.Category
+
+<link href="~/css/Notification.css" rel="stylesheet">
+<div id="notification"></div>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-primary text-white rounded-top-4">
+                    <h3 class="card-title text-center mb-0">Create New Category</h3>
+                </div>
+                <div class="card-body bg-light rounded-bottom-4">
+                    <form id="categoryForm" asp-action="Create" method="post">
+                        <!-- Category Type -->
+                        <div class="mb-4">
+                            <label for="CategoryType" class="form-label fw-bold">
+                                <i class="bi bi-ui-checks me-2"></i> Category Type
+                            </label>
+                            <select id="CategoryType" name="CategoryType" class="form-select form-select-lg" required>
+                                <option value="Mezzex">Mezzex</option>
+                                <option value="Amazon">Amazon</option>
+                                <option value="Ebay">Ebay</option>
+                            </select>
+                        </div>
+
+                        <!-- Category Name -->
+                        <div class="mb-4">
+                            <label for="Name" class="form-label fw-bold">
+                                <i class="bi bi-pencil-square me-2"></i> Category Name
+                            </label>
+                            <input type="text"
+                                   id="Name"
+                                   name="Name"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter category name"
+                                   required
+                                   maxlength="50" />
+                            <small id="nameCounter" class="text-muted d-block mt-1">50 characters left</small>
+                        </div>
+
+                        <!-- Parent Category -->
+                        <div class="mb-4">
+                            <label for="ParentCategoryId" class="form-label fw-bold">
+                                <i class="bi bi-diagram-3 me-2"></i> Parent Category (Optional)
+                            </label>
+                            <select id="ParentCategoryId" name="ParentCategoryId" class="form-select form-select-lg">
+                                <option value="">-- No Parent (Top Level) --</option>
+                                @foreach (var category in ViewBag.ParentCategories as List<Mezzex_Inventory_Mangement.Models.Category>)
+                                {
+                                    <option value="@category.Id">@category.Name</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label for="Description" class="form-label fw-bold">
+                                <i class="bi bi-info-circle me-2"></i> Description
+                            </label>
+                            <textarea id="Description"
+                                      name="Description"
+                                      class="form-control form-control-lg"
+                                      rows="2"
+                                      placeholder="Enter category description"></textarea>
+                            <small id="descriptionCounter" class="text-muted d-block mt-1">200 characters left</small>
+                        </div>
+
+                        <!-- IsActive Checkbox -->
+                        <div class="mb-4 form-check">
+                            <input type="checkbox"
+                                   id="IsActive"
+                                   name="IsActive"
+                                   class="form-check-input"
+                                   value="true"
+                                   checked />
+                            <label for="IsActive" class="form-check-label fw-bold">
+                                <i class="bi bi-eye me-2"></i> Is Active
+                            </label>
+                        </div>
+
+                        <!-- Save Button -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                            <!-- Save Button -->
+                            <button type="submit" class="btn btn-success btn-lg rounded-bottom-4 w-75">
+                                <i class="bi bi-save me-2"></i> Save Category
+                            </button>
+                            <!-- Back Button -->
+                            <button type="button" class="btn btn-secondary btn-lg rounded-bottom-4 w-25" onclick="history.back()">
+                                <i class="bi bi-arrow-left me-2"></i> Back
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Live Character Counter for "Name" field
+            $('#Name').on('input', function () {
+                let maxLength = 50;
+                let remaining = maxLength - $(this).val().length;
+                $('#nameCounter').text(remaining + " characters left");
+            });
+
+            // Live Character Counter for "Description" field
+            $('#Description').on('input', function () {
+                let maxLength = 200;
+                let remaining = maxLength - $(this).val().length;
+                $('#descriptionCounter').text(remaining + " characters left");
+            });
+
+            // Show animated notification
+            function showNotification(message) {
+                const $notification = $('#notification');
+                $notification.text(message).addClass('show');
+
+                // Hide notification after 3 seconds
+                setTimeout(function () {
+                    $notification.addClass('hide');
+
+                    // Fully remove after animation
+                    setTimeout(function () {
+                        $notification.removeClass('show hide').text('');
+                    }, 500); // Match transition duration
+                }, 3000);
+            }
+
+            // Form submission via AJAX
+            $('#categoryForm').on('submit', function (e) {
+                e.preventDefault();
+                let formData = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: formData,
+                    beforeSend: function () {
+                        $('button[type="submit"]').prop('disabled', true).html('<i class="bi bi-hourglass-split me-2"></i> Saving...');
+                    },
+                    success: function (response) {
+                        showNotification('Category saved successfully!');
+                        $('#categoryForm')[0].reset();
+                        $('#nameCounter').text("50 characters left");
+                        $('#descriptionCounter').text("200 characters left");
+                    },
+                    error: function () {
+                        showNotification('Error saving category. Please try again!');
+                    },
+                    complete: function () {
+                        $('button[type="submit"]').prop('disabled', false).html('<i class="bi bi-save me-2"></i> Save Category');
+                    }
+                });
+            });
+        });
+    </script>
+}

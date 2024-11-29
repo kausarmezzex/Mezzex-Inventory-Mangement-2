@@ -1,0 +1,233 @@
+﻿@model Mezzex_Inventory_Mangement.Models.Brand
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" /> <!-- Bootstrap Icons -->
+<link href="~/css/Notification.css" rel="stylesheet">
+<div id="notification"></div>
+<style>
+    .selectpicker.btn-light[title="Select Category"]::after {
+        color: #36454F !important; /* Change this to your desired color */
+    }
+
+    /* Alternative for more flexibility */
+    .selectpicker-title {
+        color: #36454F !important; /* Replace with your desired color */
+    }
+</style>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-primary text-white rounded-top-4">
+                    <h3 class="card-title text-center mb-0">Create New Brand</h3>
+                </div>
+                <div class="card-body bg-light rounded-bottom-4">
+                    <form id="brandForm" asp-action="Create" method="post">
+                        <!-- Brand Name -->
+                        <div class="mb-4">
+                            <label for="BrandName" class="form-label fw-bold">
+                                <i class="bi bi-pencil-square me-2"></i> Brand Name
+                            </label>
+                            <input type="text"
+                                   id="BrandName"
+                                   name="BrandName"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter brand name"
+                                   required
+                                   maxlength="50" />
+                            <small id="brandNameCounter" class="text-muted d-block mt-1">50 characters left</small>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label for="Description" class="form-label fw-bold">
+                                <i class="bi bi-info-circle me-2"></i> Description
+                            </label>
+                            <textarea id="Description"
+                                      name="Description"
+                                      class="form-control form-control-lg"
+                                      rows="2"
+                                      placeholder="Enter brand description"></textarea>
+                            <small id="descriptionCounter" class="text-muted d-block mt-1">200 characters left</small>
+                        </div>
+
+                        <!-- Country -->
+                        <div class="mb-4">
+                            <label for="Country" class="form-label fw-bold">
+                                <i class="bi bi-globe me-2"></i> Country
+                            </label>
+                            <input type="text"
+                                   id="Country"
+                                   name="Country"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter country" />
+                        </div>
+
+                        <!-- State -->
+                        <div class="mb-4">
+                            <label for="State" class="form-label fw-bold">
+                                <i class="bi bi-map me-2"></i> State
+                            </label>
+                            <input type="text"
+                                   id="State"
+                                   name="State"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter state" />
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="mb-4">
+                            <label for="PhoneNumber" class="form-label fw-bold">
+                                <i class="bi bi-telephone me-2"></i> Phone Number
+                            </label>
+                            <input type="text"
+                                   id="PhoneNumber"
+                                   name="PhoneNumber"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter phone number" />
+                        </div>
+
+                        <!-- Website -->
+                        <div class="mb-4">
+                            <label for="Website" class="form-label fw-bold">
+                                <i class="bi bi-link me-2"></i> Website
+                            </label>
+                            <input type="url"
+                                   id="Website"
+                                   name="Website"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter website URL" />
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-4">
+                            <label for="Email" class="form-label fw-bold">
+                                <i class="bi bi-envelope me-2"></i> Email
+                            </label>
+                            <input type="email"
+                                   id="Email"
+                                   name="Email"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter email address" />
+                        </div>
+
+                       <!-- Associated Categories -->
+                        <div class="mb-4">
+                            <label for="Categories" class="form-label fw-bold">
+                                <i class="bi bi-collection me-2"></i> Associated Categories
+                            </label>
+                            <select class="selectpicker form-control role-page-dropdown"
+                                    style="width: 100%;"
+                                    name="SelectedCategories"
+                                    multiple data-live-search="true" data-selected-text-format="count > 1"
+                                    data-style="btn-light btn-lg selectpicker-title"
+                                    title="Select Category">
+                                @foreach (var category in ViewBag.Categories as List<Mezzex_Inventory_Mangement.Models.Category>)
+                                {
+                                    <option value="@category.Id">@category.Name</option>
+                                }
+                            </select>
+
+                            <small class="text-muted">Search and select categories. Selected categories will be displayed in a count if more than one is chosen.</small>
+                        </div>
+
+                        <!-- IsActive Checkbox -->
+                        <div class="mb-4 form-check">
+                            <input type="checkbox"
+                                   id="IsActive"
+                                   name="IsActive"
+                                   class="form-check-input"
+                                   value="true"
+                                   checked />
+                            <label for="IsActive" class="form-check-label fw-bold">
+                                <i class="bi bi-eye me-2"></i> Is Active
+                            </label>
+                        </div>
+                       
+                        <!-- Save Button -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                            <button type="submit" class="btn btn-success btn-lg rounded-bottom-4 w-75">
+                                <i class="bi bi-save me-2"></i> Save Brand
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-lg rounded-bottom-4 w-25" onclick="history.back()">
+                                <i class="bi bi-arrow-left me-2"></i> Back
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Initialize Bootstrap Select
+            $('.selectpicker').selectpicker();
+            // Live Character Counter for "BrandName" field
+            $('#BrandName').on('input', function () {
+                let maxLength = 50;
+                let remaining = maxLength - $(this).val().length;
+                $('#brandNameCounter').text(remaining + " characters left");
+            });
+
+            // Live Character Counter for "Description" field
+            $('#Description').on('input', function () {
+                let maxLength = 200;
+                let remaining = maxLength - $(this).val().length;
+                $('#descriptionCounter').text(remaining + " characters left");
+            });
+
+            // Show animated notification
+            function showNotification(message) {
+                const $notification = $('#notification');
+                $notification.text(message).addClass('show');
+
+                // Hide notification after 3 seconds
+                setTimeout(function () {
+                    $notification.addClass('hide');
+
+                    // Fully remove after animation
+                    setTimeout(function () {
+                        $notification.removeClass('show hide').text('');
+                    }, 500);
+                }, 3000);
+            }
+            
+            // Form submission via AJAX
+            $('#brandForm').on('submit', function (e) {
+                e.preventDefault();
+                let formData = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: formData,
+                    beforeSend: function () {
+                        $('button[type="submit"]').prop('disabled', true).html('<i class="bi bi-hourglass-split me-2"></i> Saving...');
+                    },
+                    success: function (response) {
+                        showNotification('Brand saved successfully!');
+                        $('#brandForm')[0].reset();
+                        $('#brandNameCounter').text("50 characters left");
+                        $('#descriptionCounter').text("200 characters left");
+                    },
+                    error: function () {
+                        showNotification('Error saving brand. Please try again!');
+                    },
+                    complete: function () {
+                        $('button[type="submit"]').prop('disabled', false).html('<i class="bi bi-save me-2"></i> Save Brand');
+                    }
+                });
+            });
+        });
+    </script>
+}

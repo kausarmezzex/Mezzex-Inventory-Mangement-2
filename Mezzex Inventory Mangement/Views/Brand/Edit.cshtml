@@ -1,0 +1,367 @@
+﻿
+@model Mezzex_Inventory_Mangement.Models.Brand
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" /> <!-- Bootstrap Icons -->
+<link href="~/css/Notification.css" rel="stylesheet">
+<link href="~/css/NavLink.css" rel="stylesheet">
+<div id="notification"></div>
+<style>
+    .modal-footer {
+       border-top: none !important;
+       padding: 0 !important;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm rounded-4">
+                <div class="card-header bg-primary text-white rounded-top-4">
+                    <h3 class="card-title text-center mb-0">Edit Brand</h3>
+                </div>
+                <div class="card-body bg-light rounded-bottom-4">
+
+                    <!-- Tab Navigation -->
+                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+
+                            <button class="active" id="edit-brand-tab" data-bs-toggle="pill" data-bs-target="#editBrand" type="button" role="tab" aria-controls="editBrand" aria-selected="true">
+                                Edit Brand
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="" id="block-company-tab" data-bs-toggle="pill" data-bs-target="#blockCompany" type="button" role="tab" aria-controls="blockCompany" aria-selected="false">
+                                Block Company
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="brandTabContent">
+
+                        <!-- Edit Brand Tab -->
+                        <div class="tab-pane fade show active" id="editBrand" role="tabpanel" aria-labelledby="edit-brand-tab">
+                            <form id="editBrandForm" asp-action="Edit" method="post">
+                                <input type="hidden" name="Id" value="@Model.Id" />
+
+                                <!-- Brand Name -->
+                                <div class="mb-4">
+                                    <label for="BrandName" class="form-label fw-bold">
+                                        <i class="bi bi-pencil-square me-2"></i> Brand Name
+                                    </label>
+                                    <input type="text"
+                                           id="BrandName"
+                                           name="BrandName"
+                                           value="@Model.BrandName"
+                                           class="form-control form-control-lg"
+                                           placeholder="Enter brand name"
+                                           required
+                                           maxlength="50" />
+                                    <small id="brandNameCounter" class="text-muted d-block mt-1">50 characters left</small>
+                                </div>
+                                <!-- Associate Categories Dropdown -->
+                                <div class="mb-4">
+                                    <label for="selectedCategories" class="form-label fw-bold">
+                                        <i class="bi bi-tags me-2"></i> Associated Categories
+                                    </label>
+                                    <select class="selectpicker form-control"
+                                            id="selectedCategories"
+                                            name="selectedCategories"
+                                            multiple
+                                            data-live-search="true"
+                                            data-selected-text-format="count > 1"
+                                            data-style="btn-light btn-lg selectpicker-title"
+                                            title="Select Categories">
+                                        @foreach (var category in ViewBag.Categories as List<Mezzex_Inventory_Mangement.Models.Category>)
+                                        {
+                                            // Check if the category is associated with the brand
+                                            bool isSelected = Model.Categories != null && Model.Categories.Any(c => c.Id == category.Id);
+
+                                            @if (isSelected)
+                                            {
+                                                <option value="@category.Id" selected>@category.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@category.Id">@category.Name</option>
+                                            }
+                                        }
+
+                                    </select>
+                                </div>
+
+
+                                <!-- Country -->
+                                <div class="mb-4">
+                                    <label for="Country" class="form-label fw-bold">
+                                        <i class="bi bi-geo me-2"></i> Country
+                                    </label>
+                                    <input type="text"
+                                           id="Country"
+                                           name="Country"
+                                           value="@Model.Country"
+                                           class="form-control form-control-lg"
+                                           placeholder="Enter country" />
+                                </div>
+
+                                <!-- State -->
+                                <div class="mb-4">
+                                    <label for="State" class="form-label fw-bold">
+                                        <i class="bi bi-map me-2"></i> State
+                                    </label>
+                                    <input type="text"
+                                           id="State"
+                                           name="State"
+                                           value="@Model.State"
+                                           class="form-control form-control-lg"
+                                           placeholder="Enter state" />
+                                </div>
+
+                                <!-- Phone Number -->
+                                <div class="mb-4">
+                                    <label for="PhoneNumber" class="form-label fw-bold">
+                                        <i class="bi bi-telephone me-2"></i> Phone Number
+                                    </label>
+                                    <input type="text"
+                                           id="PhoneNumber"
+                                           name="PhoneNumber"
+                                           value="@Model.PhoneNumber"
+                                           class="form-control form-control-lg"
+                                           placeholder="Enter phone number"
+                                           maxlength="15" />
+                                </div>
+
+                                <!-- Website -->
+                                <div class="mb-4">
+                                    <label for="Website" class="form-label fw-bold">
+                                        <i class="bi bi-globe me-2"></i> Website
+                                    </label>
+                                    <input type="url"
+                                           id="Website"
+                                           name="Website"
+                                           value="@Model.Website"
+                                           class="form-control form-control-lg"
+                                           placeholder="Enter website URL" />
+                                </div>
+
+                                <!-- Email -->
+                                <div class="mb-4">
+                                    <label for="Email" class="form-label fw-bold">
+                                        <i class="bi bi-envelope me-2"></i> Email
+                                    </label>
+                                    <input type="email"
+                                           id="Email"
+                                           name="Email"
+                                           value="@Model.Email"
+                                           class="form-control form-control-lg"
+                                           placeholder="Enter email address" />
+                                </div>
+
+                                <!-- Description -->
+                                <div class="mb-4">
+                                    <label for="Description" class="form-label fw-bold">
+                                        <i class="bi bi-info-circle me-2"></i> Description
+                                    </label>
+                                    <textarea id="Description"
+                                              name="Description"
+                                              class="form-control form-control-lg"
+                                              rows="2"
+                                              placeholder="Enter brand description"
+                                              maxlength="200">@Model.Description</textarea>
+                                    <small id="descriptionCounter" class="text-muted d-block mt-1">200 characters left</small>
+                                </div>
+
+                                <!-- IsActive Checkbox -->
+                                <div class="mb-4 form-check">
+                                    <input type="checkbox"
+                                           id="IsActive"
+                                           name="IsActive"
+                                           class="form-check-input"
+                                           value="true"
+                                    @(Model.IsActive == true ? "checked" : "") />
+                                    <label for="IsActive" class="form-check-label fw-bold">
+                                        <i class="bi bi-eye me-2"></i> Is Active
+                                    </label>
+                                </div>
+                               
+                                <!-- Save and Back Buttons -->
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                                    <button type="submit" class="btn btn-success btn-lg rounded-bottom-4 w-75">
+                                        <i class="bi bi-save me-2"></i> Update Brand
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-lg rounded-bottom-4 w-25" onclick="history.back()">
+                                        <i class="bi bi-arrow-left me-2"></i> Back
+                                    </button>
+                                </div>
+                            </form>
+
+                        </div>
+
+                        <!-- Block Company Tab -->
+                        <div class="tab-pane fade" id="blockCompany" role="tabpanel" aria-labelledby="block-company-tab">
+                            <div class="table-responsive">
+                                <form id="blockCompanyForm">
+                                    <!-- Hidden field to pass Brand ID -->
+                                    <input type="hidden" name="BrandId" value="@Model.Id" />
+
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Select</th>
+                                                    <th>Company Name</th>
+                                                    <th>Reason</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{
+                                                    // Explicitly cast ViewBag properties
+                                                    var companies = ViewBag.Companies as List<Mezzex_Inventory_Mangement.Models.ManageCompany>;
+                                                    var blockedCompanies = ViewBag.BlockedCompanies as List<Mezzex_Inventory_Mangement.Models.BlockedCompany>;
+                                                }
+                                                @for (int i = 0; i < companies.Count; i++)
+                                                {
+                                                    var company = companies[i];
+
+                                                    // Check if the company is blocked
+                                                    var blockedCompany = blockedCompanies?.FirstOrDefault(bc => bc.CompanyId == company.CompanyId);
+
+                                                    <tr>
+                                                        <td>
+                                                            <!-- Checkbox for selecting company -->
+                                                            <input type="checkbox"
+                                                                   name="BlockedCompanies[@i].CompanyId"
+                                                                   value="@company.CompanyId"
+                                                                   class="form-check-input company-checkbox"
+                                                            @(blockedCompany != null ? "checked" : "")>
+                                                        </td>
+                                                        <td>@company.CompanyName</td>
+                                                        <td>
+                                                            <!-- Input field for reason -->
+                                                            <input type="text"
+                                                                   name="BlockedCompanies[@i].Reason"
+                                                                   class="form-control reason-input"
+                                                                   placeholder="Enter reason"
+                                                                   value="@(blockedCompany?.Reason ?? "")"
+                                                                   data-company-id="@company.CompanyId"
+                                                            @(blockedCompany == null ? "disabled" : "") />
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </form>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" id="saveBlockedCompanies">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.selectpicker').selectpicker();
+
+            // Live Character Counter for "BrandName" field
+            $('#BrandName').on('input', function () {
+                let maxLength = 50;
+                let remaining = maxLength - $(this).val().length;
+                $('#brandNameCounter').text(remaining + " characters left");
+            });
+
+            // Live Character Counter for "Description" field
+            $('#Description').on('input', function () {
+                let maxLength = 200;
+                let remaining = maxLength - $(this).val().length;
+                $('#descriptionCounter').text(remaining + " characters left");
+            });
+            // Enable/disable reason input based on checkbox selection
+            $('.company-checkbox').on('change', function () {
+                const index = $(this).attr('name').match(/\d+/)[0]; // Extract the index from the checkbox name
+                const reasonInput = $(`input[name="BlockedCompanies[${index}].Reason"]`);
+
+                if ($(this).is(':checked')) {
+                    reasonInput.prop('disabled', false); // Enable input when checkbox is checked
+                } else {
+                    reasonInput.prop('disabled', true).val(''); // Disable and clear input when unchecked
+                }
+            });
+
+            // Pre-enable reason fields for already checked companies
+            $('.company-checkbox:checked').each(function () {
+                const index = $(this).attr('name').match(/\d+/)[0];
+                const reasonInput = $(`input[name="BlockedCompanies[${index}].Reason"]`);
+                reasonInput.prop('disabled', false); // Enable input for pre-selected companies
+            });
+
+            // Save Blocked Companies
+            $('#saveBlockedCompanies').on('click', function () {
+                const formData = $('#blockCompanyForm').serialize();
+
+                $.ajax({
+                    url: '/Brand/BlockCompanies', // Adjust URL for your controller
+                    method: 'POST',
+                    data: formData,
+                    success: function () {
+                        showNotification('Blocked companies saved successfully.!');
+                        $('#blockCompanyModal').modal('hide');
+                    },
+                    error: function () {
+                        showNotification('Failed to save blocked companies.!');
+                    }
+                });
+            });
+            // Notification handling
+            function showNotification(message) {
+                const $notification = $('#notification');
+                $notification.text(message).addClass('show');
+
+                // Hide notification after 3 seconds
+                setTimeout(function () {
+                    $notification.addClass('hide');
+
+                    // Fully remove after animation
+                    setTimeout(function () {
+                        $notification.removeClass('show hide').text('');
+                    }, 500); // Match transition duration
+                }, 3000);
+            }
+
+            // Example: Show notification on form submit
+            $('#editBrandForm').on('submit', function (e) {
+                e.preventDefault();
+                let formData = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: formData,
+                    beforeSend: function () {
+                        $('button[type="submit"]').prop('disabled', true).html('<i class="bi bi-hourglass-split me-2"></i> Updating...');
+                    },
+                    success: function (response) {
+                        // Call notification function
+                        showNotification('Brand updated successfully!');
+                    },
+                    error: function () {
+                        showNotification('Error updating brand. Please try again!');
+                    },
+                    complete: function () {
+                        $('button[type="submit"]').prop('disabled', false).html('<i class="bi bi-save me-2"></i> Update Brand');
+                    }
+                });
+            });
+        });
+    </script>
+}

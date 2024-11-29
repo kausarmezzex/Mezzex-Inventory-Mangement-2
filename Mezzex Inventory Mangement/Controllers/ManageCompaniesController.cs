@@ -13,7 +13,6 @@ using static Mezzex_Inventory_Mangement.Controllers.UsersController;
 
 namespace Mezzex_Inventory_Mangement.Controllers
 {
-    [Authorize(Policy = "CanManageCompany")]
     public class ManageCompaniesController : Controller
     {
         private readonly ManageCompanyService _companyService;

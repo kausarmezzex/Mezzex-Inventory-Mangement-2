@@ -1,0 +1,120 @@
+﻿@model Mezzex_Inventory_Mangement.Models.Brand
+
+@{
+    ViewData["Title"] = "Brand Details";
+}
+
+<div class="container mt-5">
+    <!-- Page Header -->
+    <div class="text-center mb-4">
+        <h1 class="display-5 fw-bold">@Model.BrandName</h1>
+        <p class="text-muted">@Model.Description</p>
+    </div>
+
+    <!-- Brand Details Card -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Country:</strong> @Model.Country</p>
+                    <p><strong>State:</strong> @Model.State</p>
+                    <p><strong>Phone Number:</strong> @Model.PhoneNumber</p>
+                </div>
+                <div class="col-md-6">
+                    <p>
+                        <strong>Website:</strong>
+                        <a href="@Model.Website" target="_blank" class="link-primary">@Model.Website</a>
+                    </p>
+                    <p>
+                        <strong>Email:</strong>
+                        <a href="mailto:@Model.Email" class="link-primary">@Model.Email</a>
+                    </p>
+                    <p>
+                        <strong>Status:</strong>
+                        @if (Model.IsActive == true)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Inactive</span>
+                        }
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audit Information -->
+    @if (!string.IsNullOrEmpty(Model.CreatedBy) || Model.CreatedOn != null ||
+    !string.IsNullOrEmpty(Model.ModifiedBy) || Model.ModifiedOn != null)
+    {
+        <div class="card mt-4 shadow-sm">
+            <div class="card-header bg-secondary text-white">
+                <h4 class="mb-0">Audit Information</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    @if (!string.IsNullOrEmpty(Model.CreatedBy))
+                    {
+                        <li class="list-group-item">
+                            <strong>Created By:</strong> @Model.CreatedBy
+                        </li>
+                    }
+                    @if (Model.CreatedOn != null)
+                    {
+                        <li class="list-group-item">
+                            <strong>Created On:</strong> @Model.CreatedOn?.ToString("yyyy-MM-dd")
+                        </li>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.ModifiedBy))
+                    {
+                        <li class="list-group-item">
+                            <strong>Modified By:</strong> @Model.ModifiedBy
+                        </li>
+                    }
+                    @if (Model.ModifiedOn != null)
+                    {
+                        <li class="list-group-item">
+                            <strong>Modified On:</strong> @Model.ModifiedOn?.ToString("yyyy-MM-dd")
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p class="text-muted mt-4 text-center">No audit information available.</p>
+    }
+
+    <!-- Associated Categories -->
+    @if (Model.Categories.Any())
+    {
+        <div class="card mt-4 shadow-sm">
+            <div class="card-header bg-secondary text-white">
+                <h4 class="mb-0">Associated Categories</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    @foreach (var category in Model.Categories)
+                    {
+                        <li class="list-group-item">@category.Name</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p class="text-muted mt-4 text-center">No categories associated with this brand.</p>
+    }
+
+    <!-- Back Button -->
+    <div class="text-center mt-5">
+        <a asp-action="Index" class="btn btn-primary btn-lg">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>

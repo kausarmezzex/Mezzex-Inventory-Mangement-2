@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mezzex_Inventory_Mangement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241121102047_Add base class in  alter application table add dob")]
-    partial class Addbaseclassinalterapplicationtableadddob
+    [Migration("20241129100314_Add Blocked company List")]
+    partial class AddBlockedcompanyList
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,21 @@ namespace Mezzex_Inventory_Mangement.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("BrandCategory", b =>
+                {
+                    b.Property<int>("BrandsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoriesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BrandsId", "CategoriesId");
+
+                    b.HasIndex("CategoriesId");
+
+                    b.ToTable("BrandCategories", (string)null);
+                });
 
             modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.ApplicationRole", b =>
                 {
@@ -36,6 +51,21 @@ namespace Mezzex_Inventory_Mangement.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
@@ -169,6 +199,151 @@ namespace Mezzex_Inventory_Mangement.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.BlockedCompany", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BrandId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BrandId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("BlockedCompanies");
+                });
+
+            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.Brand", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BrandName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Website")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Brands");
+                });
+
+            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CategoryType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ParentCategoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentCategoryId");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.ManageCompany", b =>
                 {
                     b.Property<int>("CompanyId")
@@ -216,6 +391,9 @@ namespace Mezzex_Inventory_Mangement.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("CompanyLogoUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CompanyName")
                         .IsRequired()
@@ -273,6 +451,9 @@ namespace Mezzex_Inventory_Mangement.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -327,7 +508,7 @@ namespace Mezzex_Inventory_Mangement.Migrations
                     b.ToTable("ManageCompany");
                 });
 
-            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.PermissionName", b =>
+            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.Page", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -339,27 +520,36 @@ namespace Mezzex_Inventory_Mangement.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Page")
+                    b.Property<string>("Url")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("PermissionsName");
+                    b.ToTable("Pages");
                 });
 
-            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.RolePermission", b =>
+            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.PageRoleMapping", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PageId")
+                        .HasColumnType("int");
+
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PermissionId")
-                        .HasColumnType("int");
+                    b.HasKey("Id");
 
-                    b.HasKey("RoleId", "PermissionId");
+                    b.HasIndex("PageId");
 
-                    b.HasIndex("PermissionId");
+                    b.HasIndex("RoleId");
 
-                    b.ToTable("RolePermissions");
+                    b.ToTable("PageRoleMappings");
                 });
 
             modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.SellingChannel", b =>
@@ -378,6 +568,9 @@ namespace Mezzex_Inventory_Mangement.Migrations
 
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -405,29 +598,6 @@ namespace Mezzex_Inventory_Mangement.Migrations
                     b.ToTable("SellingChannel");
                 });
 
-            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.UserCompany", b =>
-                {
-                    b.Property<int>("UserCompanyId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserCompanyId"));
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserCompanyId");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserCompanies");
-                });
-
             modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.UserCompanyAssignment", b =>
                 {
                     b.Property<int>("Id")
@@ -444,6 +614,9 @@ namespace Mezzex_Inventory_Mangement.Migrations
 
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -468,32 +641,6 @@ namespace Mezzex_Inventory_Mangement.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserCompanyAssignments");
-                });
-
-            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.UserPermission", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PermissionId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsAssigned")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsOverride")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "PermissionId");
-
-                    b.HasIndex("PermissionId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("UserPermissions");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -609,21 +756,65 @@ namespace Mezzex_Inventory_Mangement.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.RolePermission", b =>
+            modelBuilder.Entity("BrandCategory", b =>
                 {
-                    b.HasOne("Mezzex_Inventory_Mangement.Models.PermissionName", "Permission")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("PermissionId")
+                    b.HasOne("Mezzex_Inventory_Mangement.Models.Brand", null)
+                        .WithMany()
+                        .HasForeignKey("BrandsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mezzex_Inventory_Mangement.Models.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.BlockedCompany", b =>
+                {
+                    b.HasOne("Mezzex_Inventory_Mangement.Models.Brand", "Brand")
+                        .WithMany()
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mezzex_Inventory_Mangement.Models.ManageCompany", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.Category", b =>
+                {
+                    b.HasOne("Mezzex_Inventory_Mangement.Models.Category", "ParentCategory")
+                        .WithMany("SubCategories")
+                        .HasForeignKey("ParentCategoryId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("ParentCategory");
+                });
+
+            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.PageRoleMapping", b =>
+                {
+                    b.HasOne("Mezzex_Inventory_Mangement.Models.Page", "Page")
+                        .WithMany("PageRoleMappings")
+                        .HasForeignKey("PageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Mezzex_Inventory_Mangement.Models.ApplicationRole", "Role")
-                        .WithMany("RolePermissions")
+                        .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Permission");
+                    b.Navigation("Page");
 
                     b.Navigation("Role");
                 });
@@ -643,25 +834,6 @@ namespace Mezzex_Inventory_Mangement.Migrations
                     b.Navigation("Company");
                 });
 
-            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.UserCompany", b =>
-                {
-                    b.HasOne("Mezzex_Inventory_Mangement.Models.ManageCompany", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Mezzex_Inventory_Mangement.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Company");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.UserCompanyAssignment", b =>
                 {
                     b.HasOne("Mezzex_Inventory_Mangement.Models.ManageCompany", "Company")
@@ -677,33 +849,6 @@ namespace Mezzex_Inventory_Mangement.Migrations
                         .IsRequired();
 
                     b.Navigation("Company");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.UserPermission", b =>
-                {
-                    b.HasOne("Mezzex_Inventory_Mangement.Models.PermissionName", "Permission")
-                        .WithMany("UserPermissions")
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Mezzex_Inventory_Mangement.Models.ApplicationRole", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Mezzex_Inventory_Mangement.Models.ApplicationUser", "User")
-                        .WithMany("UserPermissions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Permission");
-
-                    b.Navigation("Role");
 
                     b.Navigation("User");
                 });
@@ -769,16 +914,17 @@ namespace Mezzex_Inventory_Mangement.Migrations
 
             modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.ApplicationRole", b =>
                 {
-                    b.Navigation("RolePermissions");
-
                     b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("UserPermissions");
-
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.Category", b =>
+                {
+                    b.Navigation("SubCategories");
                 });
 
             modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.ManageCompany", b =>
@@ -786,11 +932,9 @@ namespace Mezzex_Inventory_Mangement.Migrations
                     b.Navigation("SellingChannels");
                 });
 
-            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.PermissionName", b =>
+            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.Page", b =>
                 {
-                    b.Navigation("RolePermissions");
-
-                    b.Navigation("UserPermissions");
+                    b.Navigation("PageRoleMappings");
                 });
 
             modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.UserCompanyAssignment", b =>

@@ -1,0 +1,10 @@
+﻿@model Mezzex_Inventory_Mangement.Models.Category
+
+<h2>Delete Category</h2>
+<p>Are you sure you want to delete the category: <strong>@Model.Name</strong>?</p>
+
+<form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

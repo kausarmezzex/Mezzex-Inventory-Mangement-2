@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Mezzex_Inventory_Mangement.Migrations
 {
     /// <inheritdoc />
-    public partial class Add : Migration
+    public partial class initialmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,6 +17,11 @@ namespace Mezzex_Inventory_Mangement.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -39,6 +44,12 @@ namespace Mezzex_Inventory_Mangement.Migrations
                     CountryName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PasswordResetToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PasswordResetTokenExpiration = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProfileImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -57,6 +68,32 @@ namespace Mezzex_Inventory_Mangement.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ParentCategoryId = table.Column<int>(type: "int", nullable: true),
+                    CategoryType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Categories_Categories_ParentCategoryId",
+                        column: x => x.ParentCategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -91,6 +128,7 @@ namespace Mezzex_Inventory_Mangement.Migrations
                     IBAN = table.Column<string>(type: "nvarchar(34)", maxLength: 34, nullable: false),
                     BIC = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false),
                     BankAddress = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    CompanyLogoUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -103,17 +141,17 @@ namespace Mezzex_Inventory_Mangement.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PermissionsName",
+                name: "Pages",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Page = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PermissionsName", x => x.Id);
+                    table.PrimaryKey("PK_Pages", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -183,17 +221,29 @@ namespace Mezzex_Inventory_Mangement.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false)
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    ApplicationRoleId = table.Column<int>(type: "int", nullable: true),
+                    ApplicationUserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_ApplicationRoleId",
+                        column: x => x.ApplicationRoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -219,32 +269,6 @@ namespace Mezzex_Inventory_Mangement.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserCompanies",
-                columns: table => new
-                {
-                    UserCompanyId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    CompanyId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserCompanies", x => x.UserCompanyId);
-                    table.ForeignKey(
-                        name: "FK_UserCompanies_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserCompanies_ManageCompany_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "ManageCompany",
-                        principalColumn: "CompanyId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -281,56 +305,27 @@ namespace Mezzex_Inventory_Mangement.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RolePermissions",
+                name: "PageRoleMappings",
                 columns: table => new
                 {
-                    RoleId = table.Column<int>(type: "int", nullable: false),
-                    PermissionId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RolePermissions", x => new { x.RoleId, x.PermissionId });
-                    table.ForeignKey(
-                        name: "FK_RolePermissions_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RolePermissions_PermissionsName_PermissionId",
-                        column: x => x.PermissionId,
-                        principalTable: "PermissionsName",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserPermissions",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    PermissionId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PageId = table.Column<int>(type: "int", nullable: false),
                     RoleId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserPermissions", x => new { x.UserId, x.PermissionId });
+                    table.PrimaryKey("PK_PageRoleMappings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserPermissions_AspNetRoles_RoleId",
+                        name: "FK_PageRoleMappings_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserPermissions_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserPermissions_PermissionsName_PermissionId",
-                        column: x => x.PermissionId,
-                        principalTable: "PermissionsName",
+                        name: "FK_PageRoleMappings_Pages_PageId",
+                        column: x => x.PageId,
+                        principalTable: "Pages",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -389,6 +384,16 @@ namespace Mezzex_Inventory_Mangement.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserRoles_ApplicationRoleId",
+                table: "AspNetUserRoles",
+                column: "ApplicationRoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserRoles_ApplicationUserId",
+                table: "AspNetUserRoles",
+                column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserRoles_RoleId",
                 table: "AspNetUserRoles",
                 column: "RoleId");
@@ -413,9 +418,19 @@ namespace Mezzex_Inventory_Mangement.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RolePermissions_PermissionId",
-                table: "RolePermissions",
-                column: "PermissionId");
+                name: "IX_Categories_ParentCategoryId",
+                table: "Categories",
+                column: "ParentCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PageRoleMappings_PageId",
+                table: "PageRoleMappings",
+                column: "PageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PageRoleMappings_RoleId",
+                table: "PageRoleMappings",
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SellingChannel_CompanyId",
@@ -428,16 +443,6 @@ namespace Mezzex_Inventory_Mangement.Migrations
                 column: "UserCompanyAssignmentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserCompanies_CompanyId",
-                table: "UserCompanies",
-                column: "CompanyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserCompanies_UserId",
-                table: "UserCompanies",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserCompanyAssignments_CompanyId",
                 table: "UserCompanyAssignments",
                 column: "CompanyId");
@@ -446,16 +451,6 @@ namespace Mezzex_Inventory_Mangement.Migrations
                 name: "IX_UserCompanyAssignments_UserId",
                 table: "UserCompanyAssignments",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserPermissions_PermissionId",
-                table: "UserPermissions",
-                column: "PermissionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserPermissions_RoleId",
-                table: "UserPermissions",
-                column: "RoleId");
         }
 
         /// <inheritdoc />
@@ -477,25 +472,22 @@ namespace Mezzex_Inventory_Mangement.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "RolePermissions");
+                name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "PageRoleMappings");
 
             migrationBuilder.DropTable(
                 name: "SellingChannel");
 
             migrationBuilder.DropTable(
-                name: "UserCompanies");
-
-            migrationBuilder.DropTable(
-                name: "UserPermissions");
-
-            migrationBuilder.DropTable(
-                name: "UserCompanyAssignments");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "PermissionsName");
+                name: "Pages");
+
+            migrationBuilder.DropTable(
+                name: "UserCompanyAssignments");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
