@@ -1,4 +1,5 @@
-﻿using Mezzex_Inventory_Mangement.Models;
+﻿
+using Mezzex_Inventory_Mangement.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -122,7 +123,13 @@ namespace Mezzex_Inventory_Mangement.Data
                 new Page {Name = "Brand - Edit", Url ="/Brand/Edit/*"},
                 new Page {Name = "Brand - Deletem ", Url ="/Brand/Delete/*"},
                 new Page {Name = "Brand - Details ", Url ="/Brand/Details/*"},
-                new Page {Name = "Brand - Block Companies ", Url ="/Brand/BlockCompanies"}
+                new Page {Name = "Brand - Block Companies ", Url ="/Brand/BlockChannels"},
+                //Supplier
+                new Page {Name = "Supplier - Create" , Url = "/Supplier/Create"},
+                new Page {Name = "Supplier - List" , Url = "/Supplier"},
+                new Page {Name = "Supplier - Edit", Url ="/Supplier/Edit/*"},
+                new Page {Name = "Supplier - Deletem ", Url ="/Supplier/Delete/*"},
+                new Page {Name = "Supplier - Details ", Url ="/Supplier/Details/*"}
             };
 
                     foreach (var page in pages)
@@ -233,12 +240,12 @@ namespace Mezzex_Inventory_Mangement.Data
             // Assign all pages to the Admin role
             foreach (var page in pages)
             {
-                if (!context.PageRoleMappings.Any(prm => prm.RoleId == administratorRole.Id && prm.PageId == page.Id))
+                if (!context.PageRoleMappings.Any(prm => prm.RoleId == administratorRole.Id && prm.PageId == page.PageId))
                 {
                     context.PageRoleMappings.Add(new PageRoleMapping
                     {
                         RoleId = administratorRole.Id,
-                        PageId = page.Id
+                        PageId = page.PageId
                     });
                 }
             }
@@ -251,12 +258,12 @@ namespace Mezzex_Inventory_Mangement.Data
             {
                 foreach (var page in publicPages)
                 {
-                    if (!context.PageRoleMappings.Any(prm => prm.RoleId == role.Id && prm.PageId == page.Id))
+                    if (!context.PageRoleMappings.Any(prm => prm.RoleId == role.Id && prm.PageId == page.PageId))
                     {
                         context.PageRoleMappings.Add(new PageRoleMapping
                         {
                             RoleId = role.Id,
-                            PageId = page.Id
+                            PageId = page.PageId
                         });
                     }
                 }
@@ -283,12 +290,12 @@ namespace Mezzex_Inventory_Mangement.Data
             {
                 foreach (var page in freeAccessPages)
                 {
-                    if (!context.PageRoleMappings.Any(prm => prm.RoleId == role.Id && prm.PageId == page.Id))
+                    if (!context.PageRoleMappings.Any(prm => prm.RoleId == role.Id && prm.PageId == page.PageId))
                     {
                         context.PageRoleMappings.Add(new PageRoleMapping
                         {
                             RoleId = role.Id,
-                            PageId = page.Id
+                            PageId = page.PageId
                         });
                     }
                 }

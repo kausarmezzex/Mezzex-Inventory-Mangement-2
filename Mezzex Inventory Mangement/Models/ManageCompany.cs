@@ -105,6 +105,8 @@ namespace Mezzex_Inventory_Mangement.Models
 
         // Static lists for dropdown options
         public static List<string> CompanyStatusOptions => new List<string> { "Online", "Offline" };
+        // Add this navigation property
+        public ICollection<Supplier> Suppliers { get; set; } = new List<Supplier>();
 
         public static List<string> YearStartMonthOptions => new List<string>
     {

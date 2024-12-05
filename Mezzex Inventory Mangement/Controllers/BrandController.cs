@@ -77,16 +77,28 @@ namespace Mezzex_Inventory_Mangement.Controllers
             if (brand == null) return NotFound();
 
             var flattenedCategories = await _categoryService.GetHierarchicalCategoriesAsync(ascending: true);
-            // Fetch all companies for selection
-            ViewBag.Companies = _context.ManageCompany.ToList();
+            var companies = await _context.ManageCompany.ToListAsync();
 
-            // Fetch blocked companies for this brand
-            ViewBag.BlockedCompanies = _context.BlockedCompanies
+            var companySellingChannels = new Dictionary<int, List<SellingChannel>>();
+            foreach (var company in companies)
+            {
+                companySellingChannels[company.CompanyId] = await _context.SellingChannel
+                    .Where(sc => sc.CompanyId == company.CompanyId)
+                    .ToListAsync();
+            }
+
+            var blockedChannels = await _context.BlockedChannels
                 .Where(bc => bc.BrandId == id)
-                .ToList();
+                .ToListAsync();
+
+            ViewBag.Companies = companies;
             ViewBag.Categories = flattenedCategories;
+            ViewBag.CompanySellingChannels = companySellingChannels;
+            ViewBag.BlockedChannels = blockedChannels;
+
             return View(brand);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -139,42 +151,37 @@ namespace Mezzex_Inventory_Mangement.Controllers
 
             return View(brand);
         }
-        [HttpPost]
-        public async Task<IActionResult> BlockCompanies(BlockCompanyRequest request)
-        {
-            var user = await _userManager.GetUserAsync(User);
 
-            if (request == null || request.BlockedCompanies == null || !request.BlockedCompanies.Any())
+        [HttpPost]
+        public async Task<IActionResult> BlockChannels([FromBody] List<BlockedChannelViewModel> blockedChannels)
+        {
+            if (blockedChannels == null || !blockedChannels.Any())
             {
-                return BadRequest("Invalid request data.");
+                return BadRequest("No channels provided.");
             }
 
-            // Remove existing blocked companies for this brand
-            var existingBlockedCompanies = _context.BlockedCompanies
-                .Where(bc => bc.BrandId == request.BrandId)
-                .ToList();
-            _context.BlockedCompanies.RemoveRange(existingBlockedCompanies);
+            int brandId = blockedChannels.First().BrandId;
 
-            // Add new blocked companies
-            foreach (var block in request.BlockedCompanies)
+            // Remove existing blocked channels for the specified brand
+            var existingBlockedChannels = _context.BlockedChannels
+                .Where(bc => bc.BrandId == brandId);
+            _context.BlockedChannels.RemoveRange(existingBlockedChannels);
+
+            // Add the new blocked channels
+            foreach (var channel in blockedChannels)
             {
-                if (block.CompanyId != 0) // Ensure valid company ID
+                var newBlockedChannel = new BlockedChannel
                 {
-                    var blockedCompany = new BlockedCompany
-                    {
-                        BrandId = request.BrandId,
-                        CompanyId = block.CompanyId,
-                        Reason = block.Reason,
-                        CreatedOn = DateTime.Now,
-                        CreatedBy = $"{user.FirstName} {user.LastName}",
-                    };
+                    CompanyId = channel.CompanyId,
+                    BrandId = channel.BrandId,
+                    ChannelId = channel.ChannelId,
+                    Reason = channel.Reason
+                };
 
-                    _context.BlockedCompanies.Add(blockedCompany);
-                }
+                _context.BlockedChannels.Add(newBlockedChannel);
             }
 
             await _context.SaveChangesAsync();
-
             return Json(new { success = true });
         }
 

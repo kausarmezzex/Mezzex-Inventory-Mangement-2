@@ -12,7 +12,7 @@
                 </div>
                 <div class="card-body bg-light rounded-bottom-4">
                     <form id="editCategoryForm" asp-action="Edit" method="post">
-                        <input type="hidden" name="Id" value="@Model.Id" />
+                        <input type="hidden" name="CategoryId" value="@Model.CategoryId" />
                         <div class="mb-4">
                             <label for="CategoryType" class="form-label fw-bold">
                                 <i class="bi bi-ui-checks me-2"></i> Category Type
@@ -72,13 +72,13 @@
                                 <option value="">-- No Parent (Top Level) --</option>
                                 @foreach (var category in ViewBag.ParentCategories as List<Mezzex_Inventory_Mangement.Models.Category>)
                                 {
-                                    if (Model.ParentCategoryId == category.Id)
+                                    if (Model.ParentCategoryId == category.CategoryId)
                                     {
-                                        <option value="@category.Id" selected>@category.Name</option>
+                                        <option value="@category.CategoryId" selected>@category.Name</option>
                                     }
                                     else
                                     {
-                                        <option value="@category.Id">@category.Name</option>
+                                        <option value="@category.CategoryId">@category.Name</option>
                                     }
                                 }
                             </select>
@@ -165,7 +165,7 @@
             $('#editCategoryForm').on('submit', function (e) {
                 e.preventDefault();
                 let formData = $(this).serialize();
-
+                console.log(formData);
                 $.ajax({
                     url: $(this).attr('action'),
                     method: 'POST',

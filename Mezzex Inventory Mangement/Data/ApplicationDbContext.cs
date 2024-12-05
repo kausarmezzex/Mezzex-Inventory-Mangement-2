@@ -15,7 +15,8 @@ namespace Mezzex_Inventory_Mangement.Data
         public DbSet<PageRoleMapping> PageRoleMappings { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Brand> Brands { get; set; }
-        public DbSet<BlockedCompany> BlockedCompanies { get; set; }
+        public DbSet<BlockedChannel> BlockedChannels { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
 
         // Constructor
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
@@ -62,6 +63,10 @@ namespace Mezzex_Inventory_Mangement.Data
                .WithMany(c => c.Brands)
                .UsingEntity(j => j.ToTable("BrandCategories"));
 
+           modelBuilder.Entity<Supplier>()
+                .HasMany(s => s.Companies)
+                .WithMany(c => c.Suppliers)
+                .UsingEntity(j => j.ToTable("SupplierCompanies"));
         }
     }
 }

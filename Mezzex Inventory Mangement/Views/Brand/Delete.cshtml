@@ -10,7 +10,7 @@
                 <div class="card-body bg-light rounded-bottom-4">
                     <p>Are you sure you want to delete the brand: <strong>@Model.BrandName</strong>?</p>
 
-                    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                    <form asp-action="Delete" asp-route-id="@Model.BrandId" method="post">
                         @Html.AntiForgeryToken()
                         <div class="d-grid gap-2 d-md-flex justify-content-md-between">
                             <button type="submit" class="btn btn-danger btn-lg">

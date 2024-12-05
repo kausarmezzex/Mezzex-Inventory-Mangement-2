@@ -45,16 +45,7 @@
         background-color: yellow;
         font-weight: bold;
     }
-    /* General spacing and alignment */
-    .d-flex {
-        gap: 10px; /* Adds spacing between child elements */
-        flex-wrap: wrap; /* Ensures wrapping on smaller screens */
-    }
 
-    .mb-4, .mb-2, .mt-5 {
-        margin-bottom: 1rem;
-        margin-top: 2rem;
-    }
 
     /* Search Input Styling */
     .search-container input {
@@ -124,9 +115,6 @@
             color: white;
         }
 
-    .form-label {
-        margin-bottom: -0.5rem;
-    }
 </style>
 
 <h3 class="text-center my-4">Manage Categories</h3>
@@ -263,10 +251,10 @@
 
                     <!-- Action buttons -->
                     <td>
-                        <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-warning btn-sm btn-action">
+                        <a asp-action="Edit" asp-route-id="@category.CategoryId" class="btn btn-warning btn-sm btn-action">
                             <i class="bi bi-pencil-square"></i> Edit
                         </a>
-                        <a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-danger btn-sm btn-action">
+                        <a asp-action="Delete" asp-route-id="@category.CategoryId" class="btn btn-danger btn-sm btn-action">
                             <i class="bi bi-trash"></i> Delete
                         </a>
                     </td>

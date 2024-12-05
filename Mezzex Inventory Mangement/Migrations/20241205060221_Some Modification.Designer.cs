@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mezzex_Inventory_Mangement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241129100314_Add Blocked company List")]
-    partial class AddBlockedcompanyList
+    [Migration("20241205060221_Some Modification")]
+    partial class SomeModification
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,17 +27,32 @@ namespace Mezzex_Inventory_Mangement.Migrations
 
             modelBuilder.Entity("BrandCategory", b =>
                 {
-                    b.Property<int>("BrandsId")
+                    b.Property<int>("BrandsBrandId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CategoriesId")
+                    b.Property<int>("CategoriesCategoryId")
                         .HasColumnType("int");
 
-                    b.HasKey("BrandsId", "CategoriesId");
+                    b.HasKey("BrandsBrandId", "CategoriesCategoryId");
 
-                    b.HasIndex("CategoriesId");
+                    b.HasIndex("CategoriesCategoryId");
 
                     b.ToTable("BrandCategories", (string)null);
+                });
+
+            modelBuilder.Entity("ManageCompanySupplier", b =>
+                {
+                    b.Property<int>("CompaniesCompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SuppliersSupplierId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CompaniesCompanyId", "SuppliersSupplierId");
+
+                    b.HasIndex("SuppliersSupplierId");
+
+                    b.ToTable("SupplierCompanies", (string)null);
                 });
 
             modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.ApplicationRole", b =>
@@ -199,58 +214,39 @@ namespace Mezzex_Inventory_Mangement.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.BlockedCompany", b =>
+            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.BlockedChannel", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("BlockChannelId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BlockChannelId"));
 
                     b.Property<int>("BrandId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ChannelId")
                         .HasColumnType("int");
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Reason")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("BlockChannelId");
 
-                    b.HasIndex("BrandId");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("BlockedCompanies");
+                    b.ToTable("BlockedChannels");
                 });
 
             modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.Brand", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("BrandId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BrandId"));
 
                     b.Property<string>("BrandName")
                         .IsRequired()
@@ -292,18 +288,18 @@ namespace Mezzex_Inventory_Mangement.Migrations
                     b.Property<string>("Website")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("BrandId");
 
                     b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.Category", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
 
                     b.Property<string>("CategoryType")
                         .IsRequired()
@@ -337,7 +333,7 @@ namespace Mezzex_Inventory_Mangement.Migrations
                     b.Property<int?>("ParentCategoryId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("CategoryId");
 
                     b.HasIndex("ParentCategoryId");
 
@@ -510,11 +506,11 @@ namespace Mezzex_Inventory_Mangement.Migrations
 
             modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.Page", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("PageId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PageId"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -524,18 +520,18 @@ namespace Mezzex_Inventory_Mangement.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("PageId");
 
                     b.ToTable("Pages");
                 });
 
             modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.PageRoleMapping", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("PageRoleId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PageRoleId"));
 
                     b.Property<int>("PageId")
                         .HasColumnType("int");
@@ -543,7 +539,7 @@ namespace Mezzex_Inventory_Mangement.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("PageRoleId");
 
                     b.HasIndex("PageId");
 
@@ -598,13 +594,93 @@ namespace Mezzex_Inventory_Mangement.Migrations
                     b.ToTable("SellingChannel");
                 });
 
-            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.UserCompanyAssignment", b =>
+            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.Supplier", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("SupplierId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SupplierId"));
+
+                    b.Property<string>("AccountNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("RepresentativeName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("SupplierName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("SupplierType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("VatCycle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WebsiteName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("SupplierId");
+
+                    b.ToTable("Suppliers");
+                });
+
+            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.UserCompanyAssignment", b =>
+                {
+                    b.Property<int>("UserCompanyAssignmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserCompanyAssignmentId"));
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
@@ -634,7 +710,7 @@ namespace Mezzex_Inventory_Mangement.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("UserCompanyAssignmentId");
 
                     b.HasIndex("CompanyId");
 
@@ -760,34 +836,30 @@ namespace Mezzex_Inventory_Mangement.Migrations
                 {
                     b.HasOne("Mezzex_Inventory_Mangement.Models.Brand", null)
                         .WithMany()
-                        .HasForeignKey("BrandsId")
+                        .HasForeignKey("BrandsBrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Mezzex_Inventory_Mangement.Models.Category", null)
                         .WithMany()
-                        .HasForeignKey("CategoriesId")
+                        .HasForeignKey("CategoriesCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.BlockedCompany", b =>
+            modelBuilder.Entity("ManageCompanySupplier", b =>
                 {
-                    b.HasOne("Mezzex_Inventory_Mangement.Models.Brand", "Brand")
+                    b.HasOne("Mezzex_Inventory_Mangement.Models.ManageCompany", null)
                         .WithMany()
-                        .HasForeignKey("BrandId")
+                        .HasForeignKey("CompaniesCompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mezzex_Inventory_Mangement.Models.ManageCompany", "Company")
+                    b.HasOne("Mezzex_Inventory_Mangement.Models.Supplier", null)
                         .WithMany()
-                        .HasForeignKey("CompanyId")
+                        .HasForeignKey("SuppliersSupplierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Brand");
-
-                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("Mezzex_Inventory_Mangement.Models.Category", b =>

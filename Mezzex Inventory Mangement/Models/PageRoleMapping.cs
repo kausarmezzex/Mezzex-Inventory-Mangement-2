@@ -1,8 +1,11 @@
-﻿namespace Mezzex_Inventory_Mangement.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Mezzex_Inventory_Mangement.Models
 {
     public class PageRoleMapping
     {
-        public int Id { get; set; }
+        [Key]
+        public int PageRoleId { get; set; }
         public int PageId { get; set; }
         public Page Page { get; set; }
 

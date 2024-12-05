@@ -1,6 +1,4 @@
 ﻿@model IEnumerable<Mezzex_Inventory_Mangement.Models.Brand>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" /> <!-- Bootstrap Icons -->
 @{
     ViewData["Title"] = "Brands";
 }
@@ -35,14 +33,7 @@
         font-weight: bold;
     }
 
-    .filter-container select {
-        max-width: 150px;
-        padding: 8px 18px;
-        font-size: 1rem;
-        border-radius: 8px;
-        border: 1px solid #ced4da;
-    }
-
+   
     .button-group-container .btn {
         font-size: 1rem;
         border-radius: 8px;
@@ -74,42 +65,50 @@
 
 <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 mt-5">
     <!-- Search input -->
-    <div class="search-container me-1 mb-2 w-25">
-        <input type="text" id="brandSearch" class="form-control form-control-lg"
-               placeholder="🔍 Search By Brand Name"
-               onkeyup="filterBrands()" />
-    </div>
-    <!-- Filter Dropdown -->
-    <div class="filter-container me-1 mb-2">
-        <select id="brandFilter" class="form-select form-select-lg" onchange="applyBrandFilter()">
-            @if (ViewBag.Filter == "Active")
-            {
-                <option value="Active" selected>Active</option>
-            }
-            else
-            {
-                <option value="Active">Active</option>
-            }
+    <div class="button-group-container d-flex mb-2 w-50">
+        <div class="search-container me-1 w-50">
+            <input type="text" id="brandSearch" class="form-control form-control-lg"
+                   placeholder="🔍 Search By Brand Name"
+                   onkeyup="filterBrands()" />
+        </div>
+        <div class="me-1 mb-2 mt-2">
+            <label for="categoryFilter" class="form-label fw-bold">
+                <i class="bi bi-filter-circle me-2"></i> Status
+            </label>
+        </div>
+        <!-- Filter Dropdown -->
+        <div class="filter-container me-1 ">
+            <select id="brandFilter" class="form-select form-select-lg" onchange="applyBrandFilter()">
+                @if (ViewBag.Filter == "Active")
+                {
+                    <option value="Active" selected>Active</option>
+                }
+                else
+                {
+                    <option value="Active">Active</option>
+                }
 
-            @if (ViewBag.Filter == "Inactive")
-            {
-                <option value="Inactive" selected>Inactive</option>
-            }
-            else
-            {
-                <option value="Inactive">Inactive</option>
-            }
+                @if (ViewBag.Filter == "Inactive")
+                {
+                    <option value="Inactive" selected>Inactive</option>
+                }
+                else
+                {
+                    <option value="Inactive">Inactive</option>
+                }
 
-            @if (ViewBag.Filter == "All")
-            {
-                <option value="All" selected>All</option>
-            }
-            else
-            {
-                <option value="All">All</option>
-            }
-        </select>
+                @if (ViewBag.Filter == "All")
+                {
+                    <option value="All" selected>All</option>
+                }
+                else
+                {
+                    <option value="All">All</option>
+                }
+            </select>
+        </div>
     </div>
+
 
     <!-- Button group -->
     <div class="button-group-container d-flex mb-2">
@@ -184,16 +183,16 @@
                         <div class="btn-group" role="group">
                            
                             <!-- Edit Button -->
-                            <a asp-action="Edit" asp-route-id="@brand.Id" class="btn btn-warning btn-sm me-2 rounded-3" title="Edit Brand">
+                            <a asp-action="Edit" asp-route-id="@brand.BrandId" class="btn btn-warning btn-sm me-2 rounded-3" title="Edit Brand">
                                 <i class="bi bi-pencil-square"></i> Edit
                             </a>
 
                             <!-- Delete Button -->
-                            <a asp-action="Delete" asp-route-id="@brand.Id" class="btn btn-danger btn-sm me-2 rounded-3" title="Delete Brand">
+                            <a asp-action="Delete" asp-route-id="@brand.BrandId" class="btn btn-danger btn-sm me-2 rounded-3" title="Delete Brand">
                                 <i class="bi bi-trash3"></i> Delete
                             </a>
                             <!-- Details Button -->
-                            <a asp-action="Details" asp-route-id="@brand.Id" class="btn btn-info btn-sm me-2 rounded-3" title="View Details">
+                            <a asp-action="Details" asp-route-id="@brand.BrandId" class="btn btn-info btn-sm me-2 rounded-3" title="View Details">
                                 <i class="bi bi-info-circle"></i> Details
                             </a>
 
@@ -207,10 +206,6 @@
 </div>
 
 @section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
     <script>
         $(document).ready(function () {
             $('.categories-dropdown').select2({

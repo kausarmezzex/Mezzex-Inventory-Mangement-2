@@ -1,5 +1,8 @@
 ﻿
 @model Mezzex_Inventory_Mangement.Models.Brand
+@{
+    var blockedChannels = ViewBag.BlockedChannels as List<Mezzex_Inventory_Mangement.Models.BlockedChannel>;
+}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" /> <!-- Bootstrap Icons -->
 <link href="~/css/Notification.css" rel="stylesheet">
@@ -7,11 +10,29 @@
 <div id="notification"></div>
 <style>
     .modal-footer {
-       border-top: none !important;
-       padding: 0 !important;
+        border-top: none !important;
+        padding: 0 !important;
     }
-</style>
 
+    textarea {
+        all: unset; /* Reset all inherited and browser-specific styles */
+    }
+
+    .modal-header, .modal-footer {
+        border: none;
+    }
+
+    .modal-xl {
+        max-width: 1170px;
+    }
+
+    .channel-container {
+        display: flex;
+        align-items: center;
+        gap: 5px; /* Adjust the gap as needed */
+    }
+
+</style>
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-lg-8 col-md-10">
@@ -20,17 +41,15 @@
                     <h3 class="card-title text-center mb-0">Edit Brand</h3>
                 </div>
                 <div class="card-body bg-light rounded-bottom-4">
-
                     <!-- Tab Navigation -->
                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
-
                             <button class="active" id="edit-brand-tab" data-bs-toggle="pill" data-bs-target="#editBrand" type="button" role="tab" aria-controls="editBrand" aria-selected="true">
                                 Edit Brand
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="" id="block-company-tab" data-bs-toggle="pill" data-bs-target="#blockCompany" type="button" role="tab" aria-controls="blockCompany" aria-selected="false">
+                            <button id="block-company-tab" type="button" class="" data-bs-toggle="modal" data-bs-target="#blockCompanyModal">
                                 Block Company
                             </button>
                         </li>
@@ -38,70 +57,50 @@
 
                     <!-- Tab Content -->
                     <div class="tab-content" id="brandTabContent">
-
                         <!-- Edit Brand Tab -->
                         <div class="tab-pane fade show active" id="editBrand" role="tabpanel" aria-labelledby="edit-brand-tab">
                             <form id="editBrandForm" asp-action="Edit" method="post">
-                                <input type="hidden" name="Id" value="@Model.Id" />
+                                <input type="hidden" name="BrandId" value="@Model.BrandId" />
 
                                 <!-- Brand Name -->
                                 <div class="mb-4">
                                     <label for="BrandName" class="form-label fw-bold">
                                         <i class="bi bi-pencil-square me-2"></i> Brand Name
                                     </label>
-                                    <input type="text"
-                                           id="BrandName"
-                                           name="BrandName"
-                                           value="@Model.BrandName"
-                                           class="form-control form-control-lg"
-                                           placeholder="Enter brand name"
-                                           required
-                                           maxlength="50" />
+                                    <input type="text" id="BrandName" name="BrandName" value="@Model.BrandName" class="form-control form-control-lg" placeholder="Enter brand name" required maxlength="50" />
                                     <small id="brandNameCounter" class="text-muted d-block mt-1">50 characters left</small>
                                 </div>
-                                <!-- Associate Categories Dropdown -->
+
+                                <!-- Associated Categories -->
                                 <div class="mb-4">
                                     <label for="selectedCategories" class="form-label fw-bold">
                                         <i class="bi bi-tags me-2"></i> Associated Categories
                                     </label>
-                                    <select class="selectpicker form-control"
-                                            id="selectedCategories"
-                                            name="selectedCategories"
-                                            multiple
-                                            data-live-search="true"
-                                            data-selected-text-format="count > 1"
-                                            data-style="btn-light btn-lg selectpicker-title"
-                                            title="Select Categories">
+                                    <select class="selectpicker form-control" id="selectedCategories" name="selectedCategories" multiple data-live-search="true" data-selected-text-format="count > 1" data-style="btn-light btn-lg selectpicker-title" title="Select Categories">
                                         @foreach (var category in ViewBag.Categories as List<Mezzex_Inventory_Mangement.Models.Category>)
                                         {
                                             // Check if the category is associated with the brand
-                                            bool isSelected = Model.Categories != null && Model.Categories.Any(c => c.Id == category.Id);
+                                            bool isSelected = Model.Categories != null && Model.Categories.Any(c => c.CategoryId == category.CategoryId);
 
                                             @if (isSelected)
                                             {
-                                                <option value="@category.Id" selected>@category.Name</option>
+                                                <option value="@category.CategoryId" selected>@category.Name</option>
                                             }
                                             else
                                             {
-                                                <option value="@category.Id">@category.Name</option>
+                                                <option value="@category.CategoryId">@category.Name</option>
                                             }
                                         }
 
                                     </select>
                                 </div>
 
-
                                 <!-- Country -->
                                 <div class="mb-4">
                                     <label for="Country" class="form-label fw-bold">
                                         <i class="bi bi-geo me-2"></i> Country
                                     </label>
-                                    <input type="text"
-                                           id="Country"
-                                           name="Country"
-                                           value="@Model.Country"
-                                           class="form-control form-control-lg"
-                                           placeholder="Enter country" />
+                                    <input type="text" id="Country" name="Country" value="@Model.Country" class="form-control form-control-lg" placeholder="Enter country" />
                                 </div>
 
                                 <!-- State -->
@@ -109,12 +108,7 @@
                                     <label for="State" class="form-label fw-bold">
                                         <i class="bi bi-map me-2"></i> State
                                     </label>
-                                    <input type="text"
-                                           id="State"
-                                           name="State"
-                                           value="@Model.State"
-                                           class="form-control form-control-lg"
-                                           placeholder="Enter state" />
+                                    <input type="text" id="State" name="State" value="@Model.State" class="form-control form-control-lg" placeholder="Enter state" />
                                 </div>
 
                                 <!-- Phone Number -->
@@ -122,13 +116,7 @@
                                     <label for="PhoneNumber" class="form-label fw-bold">
                                         <i class="bi bi-telephone me-2"></i> Phone Number
                                     </label>
-                                    <input type="text"
-                                           id="PhoneNumber"
-                                           name="PhoneNumber"
-                                           value="@Model.PhoneNumber"
-                                           class="form-control form-control-lg"
-                                           placeholder="Enter phone number"
-                                           maxlength="15" />
+                                    <input type="text" id="PhoneNumber" name="PhoneNumber" value="@Model.PhoneNumber" class="form-control form-control-lg" placeholder="Enter phone number" maxlength="15" />
                                 </div>
 
                                 <!-- Website -->
@@ -136,12 +124,7 @@
                                     <label for="Website" class="form-label fw-bold">
                                         <i class="bi bi-globe me-2"></i> Website
                                     </label>
-                                    <input type="url"
-                                           id="Website"
-                                           name="Website"
-                                           value="@Model.Website"
-                                           class="form-control form-control-lg"
-                                           placeholder="Enter website URL" />
+                                    <input type="url" id="Website" name="Website" value="@Model.Website" class="form-control form-control-lg" placeholder="Enter website URL" />
                                 </div>
 
                                 <!-- Email -->
@@ -149,12 +132,7 @@
                                     <label for="Email" class="form-label fw-bold">
                                         <i class="bi bi-envelope me-2"></i> Email
                                     </label>
-                                    <input type="email"
-                                           id="Email"
-                                           name="Email"
-                                           value="@Model.Email"
-                                           class="form-control form-control-lg"
-                                           placeholder="Enter email address" />
+                                    <input type="email" id="Email" name="Email" value="@Model.Email" class="form-control form-control-lg" placeholder="Enter email address" />
                                 </div>
 
                                 <!-- Description -->
@@ -162,28 +140,18 @@
                                     <label for="Description" class="form-label fw-bold">
                                         <i class="bi bi-info-circle me-2"></i> Description
                                     </label>
-                                    <textarea id="Description"
-                                              name="Description"
-                                              class="form-control form-control-lg"
-                                              rows="2"
-                                              placeholder="Enter brand description"
-                                              maxlength="200">@Model.Description</textarea>
+                                    <textarea id="Description" name="Description" class="form-control form-control-lg" rows="2" placeholder="Enter brand description" maxlength="200">@Model.Description</textarea>
                                     <small id="descriptionCounter" class="text-muted d-block mt-1">200 characters left</small>
                                 </div>
 
                                 <!-- IsActive Checkbox -->
                                 <div class="mb-4 form-check">
-                                    <input type="checkbox"
-                                           id="IsActive"
-                                           name="IsActive"
-                                           class="form-check-input"
-                                           value="true"
-                                    @(Model.IsActive == true ? "checked" : "") />
+                                    <input type="checkbox" id="IsActive" name="IsActive" class="form-check-input" value="true" @(Model.IsActive == true ? "checked" : "") />
                                     <label for="IsActive" class="form-check-label fw-bold">
                                         <i class="bi bi-eye me-2"></i> Is Active
                                     </label>
                                 </div>
-                               
+
                                 <!-- Save and Back Buttons -->
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-between">
                                     <button type="submit" class="btn btn-success btn-lg rounded-bottom-4 w-75">
@@ -194,68 +162,6 @@
                                     </button>
                                 </div>
                             </form>
-
-                        </div>
-
-                        <!-- Block Company Tab -->
-                        <div class="tab-pane fade" id="blockCompany" role="tabpanel" aria-labelledby="block-company-tab">
-                            <div class="table-responsive">
-                                <form id="blockCompanyForm">
-                                    <!-- Hidden field to pass Brand ID -->
-                                    <input type="hidden" name="BrandId" value="@Model.Id" />
-
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Select</th>
-                                                    <th>Company Name</th>
-                                                    <th>Reason</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @{
-                                                    // Explicitly cast ViewBag properties
-                                                    var companies = ViewBag.Companies as List<Mezzex_Inventory_Mangement.Models.ManageCompany>;
-                                                    var blockedCompanies = ViewBag.BlockedCompanies as List<Mezzex_Inventory_Mangement.Models.BlockedCompany>;
-                                                }
-                                                @for (int i = 0; i < companies.Count; i++)
-                                                {
-                                                    var company = companies[i];
-
-                                                    // Check if the company is blocked
-                                                    var blockedCompany = blockedCompanies?.FirstOrDefault(bc => bc.CompanyId == company.CompanyId);
-
-                                                    <tr>
-                                                        <td>
-                                                            <!-- Checkbox for selecting company -->
-                                                            <input type="checkbox"
-                                                                   name="BlockedCompanies[@i].CompanyId"
-                                                                   value="@company.CompanyId"
-                                                                   class="form-check-input company-checkbox"
-                                                            @(blockedCompany != null ? "checked" : "")>
-                                                        </td>
-                                                        <td>@company.CompanyName</td>
-                                                        <td>
-                                                            <!-- Input field for reason -->
-                                                            <input type="text"
-                                                                   name="BlockedCompanies[@i].Reason"
-                                                                   class="form-control reason-input"
-                                                                   placeholder="Enter reason"
-                                                                   value="@(blockedCompany?.Reason ?? "")"
-                                                                   data-company-id="@company.CompanyId"
-                                                            @(blockedCompany == null ? "disabled" : "") />
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </form>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger" id="saveBlockedCompanies">Save Changes</button>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -264,104 +170,225 @@
     </div>
 </div>
 
-@section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('.selectpicker').selectpicker();
+<!-- Block Company Modal -->
+<div class="modal fade" id="blockCompanyModal" tabindex="-1" aria-labelledby="blockCompanyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="blockCompanyModalLabel">Block Company</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="blockChannelsForm" asp-controller="Brand" asp-action="BlockChannels" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center">
+                            <thead>
+                                <tr>
+                                    @foreach (var company in ViewBag.Companies as List<Mezzex_Inventory_Mangement.Models.ManageCompany>)
+                                    {
+                                        <th>@company.CompanyName</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var companySellingChannels = ViewBag.CompanySellingChannels as Dictionary<int, List<Mezzex_Inventory_Mangement.Models.SellingChannel>>;
+                                    int maxRows = companySellingChannels.Values.Max(channels => channels.Count);
+                                }
+                                @for (int row = 0; row < maxRows; row++)
+                                {
+                                    <tr>
+                                        @foreach (var company in ViewBag.Companies as List<Mezzex_Inventory_Mangement.Models.ManageCompany>)
+                                        {
+                                            var channels = companySellingChannels.ContainsKey(company.CompanyId)
+                                                ? companySellingChannels[company.CompanyId]
+                                                : new List<Mezzex_Inventory_Mangement.Models.SellingChannel>();
 
-            // Live Character Counter for "BrandName" field
-            $('#BrandName').on('input', function () {
-                let maxLength = 50;
-                let remaining = maxLength - $(this).val().length;
-                $('#brandNameCounter').text(remaining + " characters left");
-            });
+                                            if (row < channels.Count)
+                                            {
+                                                var channel = channels[row];
+                                                var blockedChannel = blockedChannels?.FirstOrDefault(bc => bc.CompanyId == company.CompanyId && bc.ChannelId == channel.SellingChannelId);
+                                                <td>
+                                                    <div class="channel-container d-flex align-items-center gap-2">
+                                                        <div class="form-check m-0">
+                                                            <input type="checkbox"
+                                                                   name="BlockedChannels[@row].IsChecked"
+                                                                   class="form-check-input"
+                                                                   value="true"
+                                                            @(blockedChannel != null ? "checked" : "") />
+                                                        </div>
+                                                        <label class="form-check-label mb-0">@channel.SellingChannelName</label>
+                                                    </div>
+                                                    <input name="BlockedChannels[@row].Reason"
+                                                           class="form-control mt-2"
+                                                           placeholder="Reason for blocking"
+                                                           value="@blockedChannel?.Reason"
+                                                    @(blockedChannel == null ? "disabled" : "") />
+                                                    <input type="hidden" name="BlockedChannels[@row].CompanyId" value="@company.CompanyId" />
+                                                    <input type="hidden" name="BlockedChannels[@row].ChannelId" value="@channel.SellingChannelId" />
+                                                    <input type="hidden" name="BlockedChannels[@row].BrandId" value="@Model.BrandId" />
+                                                </td>
 
-            // Live Character Counter for "Description" field
-            $('#Description').on('input', function () {
-                let maxLength = 200;
-                let remaining = maxLength - $(this).val().length;
-                $('#descriptionCounter').text(remaining + " characters left");
-            });
-            // Enable/disable reason input based on checkbox selection
-            $('.company-checkbox').on('change', function () {
-                const index = $(this).attr('name').match(/\d+/)[0]; // Extract the index from the checkbox name
-                const reasonInput = $(`input[name="BlockedCompanies[${index}].Reason"]`);
+
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">Save Blocked Channels</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+    @section Scripts {
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
+
+        <script>
+            $(document).ready(function () {
+                // Initialize Bootstrap Select
+                $('.selectpicker').selectpicker();
+
+                // Display notification from localStorage if present
+                const savedNotification = localStorage.getItem('notification');
+                const savedType = localStorage.getItem('notificationType');
+
+                if (savedNotification) {
+                    showNotification(savedNotification, savedType);
+                    localStorage.removeItem('notification');
+                    localStorage.removeItem('notificationType');
+                }
+
+                // Live Character Counter for "BrandName"
+                $('#BrandName').on('input', function () {
+                    const maxLength = 50;
+                    const remaining = maxLength - $(this).val().length;
+                    $('#brandNameCounter').text(`${remaining} characters left`);
+                });
+
+                // Live Character Counter for "Description"
+                $('#Description').on('input', function () {
+                    const maxLength = 200;
+                    const remaining = maxLength - $(this).val().length;
+                    $('#descriptionCounter').text(`${remaining} characters left`);
+                });
+
+            $(document).on('change', 'input[type="checkbox"][name*="BlockedChannels"]', function () {
+                // Find the parent container of the checkbox
+                const container = $(this).closest('td');
+
+                // Find the associated textarea within the same container
+                const textarea = container.find('input[name*="Reason"]');
 
                 if ($(this).is(':checked')) {
-                    reasonInput.prop('disabled', false); // Enable input when checkbox is checked
+                    textarea.prop('disabled', false).focus(); // Enable and focus the textarea
                 } else {
-                    reasonInput.prop('disabled', true).val(''); // Disable and clear input when unchecked
+                    textarea.prop('disabled', true).val(''); // Disable and clear the textarea
                 }
             });
 
-            // Pre-enable reason fields for already checked companies
-            $('.company-checkbox:checked').each(function () {
-                const index = $(this).attr('name').match(/\d+/)[0];
-                const reasonInput = $(`input[name="BlockedCompanies[${index}].Reason"]`);
-                reasonInput.prop('disabled', false); // Enable input for pre-selected companies
-            });
+            $('#blockChannelsForm').on('submit', function (e) {
+                e.preventDefault(); // Prevent default form submission
 
-            // Save Blocked Companies
-            $('#saveBlockedCompanies').on('click', function () {
-                const formData = $('#blockCompanyForm').serialize();
+                const dataToSubmit = [];
 
-                $.ajax({
-                    url: '/Brand/BlockCompanies', // Adjust URL for your controller
-                    method: 'POST',
-                    data: formData,
-                    success: function () {
-                        showNotification('Blocked companies saved successfully.!');
-                        $('#blockCompanyModal').modal('hide');
-                    },
-                    error: function () {
-                        showNotification('Failed to save blocked companies.!');
+                // Collect data for checked channels
+                $('input[type="checkbox"][name*="BlockedChannels"]:checked').each(function () {
+                    const container = $(this).closest('td');
+                    const companyId = container.find('input[name*="CompanyId"]').val();
+                    const channelId = container.find('input[name*="ChannelId"]').val();
+                    const brandId = container.find('input[name*="BrandId"]').val();
+                    const reason = container.find('input[name*="Reason"]').val().trim();
+
+                    if (!reason) {
+                        showNotification('Please provide a reason for all checked channels.', 'error');
+                        return false; // Exit if reason is missing
                     }
+
+                    dataToSubmit.push({ companyId, channelId, brandId, reason });
                 });
+
+                if (dataToSubmit.length > 0) {
+                    $.ajax({
+                        url: $(this).attr('action'), // Matches asp-action
+                        method: 'POST', // Matches form method
+                        contentType: 'application/json',
+                        data: JSON.stringify(dataToSubmit),
+                        success: function (response) {
+                            if (response.success) {
+                                saveNotification('Blocked channels saved successfully!', 'success');
+                                location.reload(); // Reload the page
+                            } else {
+                                showNotification('Failed to save blocked channels.', 'error');
+                            }
+                        },
+                        error: function () {
+                            showNotification('An error occurred while saving blocked channels.', 'error');
+                        }
+                    });
+                }
             });
-            // Notification handling
-            function showNotification(message) {
-                const $notification = $('#notification');
-                $notification.text(message).addClass('show');
 
-                // Hide notification after 3 seconds
-                setTimeout(function () {
-                    $notification.addClass('hide');
 
-                    // Fully remove after animation
+                // Intercept Edit Brand Form Submission
+                $('#editBrandForm').on('submit', function (e) {
+                    e.preventDefault(); // Prevent default form submission
+                    const formData = $(this).serialize();
+
+                    $.ajax({
+                        url: $(this).attr('action'),
+                        method: 'POST',
+                        data: formData,
+                        beforeSend: function () {
+                            $('button[type="submit"]').prop('disabled', true).html('<i class="bi bi-hourglass-split me-2"></i> Updating...');
+                        },
+                        success: function () {
+                            saveNotification('Brand updated successfully!', 'success');
+                            location.reload(); // Reload the page
+                        },
+                        error: function () {
+                            showNotification('Error updating brand. Please try again!', 'error');
+                        },
+                        complete: function () {
+                            $('button[type="submit"]').prop('disabled', false).html('<i class="bi bi-save me-2"></i> Update Brand');
+                        }
+                    });
+                });
+
+                // Save notification to localStorage
+                function saveNotification(message, type) {
+                    localStorage.setItem('notification', message);
+                    localStorage.setItem('notificationType', type);
+                }
+
+                // Show notification on the page
+                function showNotification(message, type = 'info') {
+                    const $notification = $('#notification');
+                    const notificationClass = type === 'success' ? 'alert-success' : type === 'error' ? 'alert-danger' : 'alert-info';
+
+                    $notification
+                        .text(message)
+                        .removeClass('alert-success alert-danger alert-info')
+                        .addClass(`alert ${notificationClass} show`);
+
+                    // Hide notification after 3 seconds
                     setTimeout(function () {
-                        $notification.removeClass('show hide').text('');
-                    }, 500); // Match transition duration
-                }, 3000);
-            }
-
-            // Example: Show notification on form submit
-            $('#editBrandForm').on('submit', function (e) {
-                e.preventDefault();
-                let formData = $(this).serialize();
-
-                $.ajax({
-                    url: $(this).attr('action'),
-                    method: 'POST',
-                    data: formData,
-                    beforeSend: function () {
-                        $('button[type="submit"]').prop('disabled', true).html('<i class="bi bi-hourglass-split me-2"></i> Updating...');
-                    },
-                    success: function (response) {
-                        // Call notification function
-                        showNotification('Brand updated successfully!');
-                    },
-                    error: function () {
-                        showNotification('Error updating brand. Please try again!');
-                    },
-                    complete: function () {
-                        $('button[type="submit"]').prop('disabled', false).html('<i class="bi bi-save me-2"></i> Update Brand');
-                    }
-                });
+                        $notification.removeClass('show').text('');
+                    }, 3000);
+                }
             });
-        });
-    </script>
-}
+        </script>
+    }

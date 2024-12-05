@@ -1,0 +1,251 @@
+﻿@model Mezzex_Inventory_Mangement.Models.Supplier
+<link href="~/css/Notification.css" rel="stylesheet">
+<div id="notification"></div>
+<style>
+    .selectpicker {
+        box-shadow: none !important;
+        border: 1px solid #ced4da !important;
+        outline: none !important;
+        border-radius: 0.25rem; /* Match input border-radius */
+        height: calc(2.875rem + 2px); /* Match Bootstrap input height */
+        padding: 0.375rem 0.75rem; /* Match input padding */
+        background-color: #fff; /* Ensure white background */
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-primary text-white rounded-top-4">
+                    <h3 class="card-title text-center mb-0">Create New Supplier</h3>
+                </div>
+                <div class="card-body bg-light rounded-bottom-4">
+                    <form id="supplierForm" asp-action="Create" method="post">
+                        <!-- Supplier Type -->
+                        <div class="mb-4">
+                            <label for="SupplierType" class="form-label fw-bold">
+                                <i class="bi bi-people me-2"></i> Supplier Type
+                            </label>
+                            <select id="SupplierType" name="SupplierType" class="form-select form-select-lg" required>
+                                @foreach (var type in Mezzex_Inventory_Mangement.Models.Supplier.SupplierTypeOptions)
+                                {
+                                    <option value="@type">@type</option>
+                                }
+                            </select>
+                        </div>
+                        <!-- Company List -->
+                        <div class="mb-4">
+                            <label for="CompanyId" class="form-label fw-bold">
+                                <i class="bi bi-building me-2"></i> Select Companies
+                            </label>
+
+                            <select id="CompanyId" name="selectedCompanyIds" class="form-select selectpicker w-100" multiple data-live-search="true" required>
+                                @foreach (var company in ViewBag.Companies)
+                                {
+                                    <option value="@company.Id">@company.Name</option>
+                                }
+                            </select>
+
+                        </div>
+
+                        <!-- Supplier Name -->
+                        <div class="mb-4">
+                            <label for="SupplierName" class="form-label fw-bold">
+                                <i class="bi bi-person-square me-2"></i> Supplier Name
+                            </label>
+                            <input type="text"
+                                   id="SupplierName"
+                                   name="SupplierName"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter supplier name"
+                                   required
+                                   maxlength="100" />
+                        </div>
+
+                        <!-- Email Address -->
+                        <div class="mb-4">
+                            <label for="Email" class="form-label fw-bold">
+                                <i class="bi bi-envelope me-2"></i> Email Address
+                            </label>
+                            <input type="email"
+                                   id="Email"
+                                   name="Email"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter supplier email"
+                                   required
+                                   maxlength="100" />
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="mb-4">
+                            <label for="Phone" class="form-label fw-bold">
+                                <i class="bi bi-telephone me-2"></i> Phone Number
+                            </label>
+                            <input type="text"
+                                   id="Phone"
+                                   name="Phone"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter phone number"
+                                   required
+                                   maxlength="20" />
+                        </div>
+
+                        <!-- Website Name -->
+                        <div class="mb-4">
+                            <label for="WebsiteName" class="form-label fw-bold">
+                                <i class="bi bi-globe me-2"></i> Website
+                            </label>
+                            <input type="text"
+                                   id="WebsiteName"
+                                   name="WebsiteName"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter website name (optional)"
+                                   maxlength="100" />
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-4">
+                            <label for="Password" class="form-label fw-bold">
+                                <i class="bi bi-lock me-2"></i> Password
+                            </label>
+                            <input type="password"
+                                   id="Password"
+                                   name="Password"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter password"
+                                   required
+                                   maxlength="50" />
+                        </div>
+
+                        <!-- Account Number -->
+                        <div class="mb-4">
+                            <label for="AccountNumber" class="form-label fw-bold">
+                                <i class="bi bi-credit-card me-2"></i> Account Number
+                            </label>
+                            <input type="text"
+                                   id="AccountNumber"
+                                   name="AccountNumber"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter account number (optional)"
+                                   maxlength="20" />
+                        </div>
+
+                        <!-- Representative Name -->
+                        <div class="mb-4">
+                            <label for="RepresentativeName" class="form-label fw-bold">
+                                <i class="bi bi-person me-2"></i> Representative Name
+                            </label>
+                            <input type="text"
+                                   id="RepresentativeName"
+                                   name="RepresentativeName"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter representative name (optional)"
+                                   maxlength="100" />
+                        </div>
+
+                        <!-- Address -->
+                        <div class="mb-4">
+                            <label for="Address" class="form-label fw-bold">
+                                <i class="bi bi-house-door me-2"></i> Address
+                            </label>
+                            <textarea id="Address"
+                                      name="Address"
+                                      class="form-control form-control-lg"
+                                      rows="2"
+                                      placeholder="Enter supplier address (optional)"
+                                      maxlength="200"></textarea>
+                        </div>
+
+                        <!-- VAT Cycle -->
+                        <div class="mb-4">
+                            <label for="VatCycle" class="form-label fw-bold">
+                                <i class="bi bi-calendar-check me-2"></i> VAT Cycle
+                            </label>
+                            <select id="VatCycle" name="VatCycle" class="form-select form-select-lg" required>
+                                @foreach (var cycle in Mezzex_Inventory_Mangement.Models.Supplier.VatCycleOptions)
+                                {
+                                    <option value="@cycle">@cycle</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Is Active -->
+                        <div class="mb-4 form-check">
+                            <input type="checkbox"
+                                   id="IsActive"
+                                   name="IsActive"
+                                   class="form-check-input"
+                                   value="true"
+                                   checked />
+                            <label for="IsActive" class="form-check-label fw-bold">
+                                <i class="bi bi-eye me-2"></i> Is Active
+                            </label>
+                        </div>
+
+                        <!-- Save and Back Buttons -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                            <!-- Save Button -->
+                            <button type="submit" class="btn btn-success btn-lg rounded-bottom-4 w-75">
+                                <i class="bi bi-save me-2"></i> Save Supplier
+                            </button>
+                            <!-- Back Button -->
+                            <button type="button" class="btn btn-secondary btn-lg rounded-bottom-4 w-25" onclick="history.back()">
+                                <i class="bi bi-arrow-left me-2"></i> Back
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+       
+        $(document).ready(function () {
+            $('.selectpicker').selectpicker();
+            // Show animated notification
+            function showNotification(message) {
+                const $notification = $('#notification');
+                $notification.text(message).addClass('show');
+
+                // Hide notification after 3 seconds
+                setTimeout(function () {
+                    $notification.addClass('hide');
+
+                    // Fully remove after animation
+                    setTimeout(function () {
+                        $notification.removeClass('show hide').text('');
+                    }, 500);
+                }, 3000);
+            }
+
+            // Form submission via AJAX
+            $('#supplierForm').on('submit', function (e) {
+                e.preventDefault();
+                let formData = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: formData,
+                    beforeSend: function () {
+                        $('button[type="submit"]').prop('disabled', true).html('<i class="bi bi-hourglass-split me-2"></i> Saving...');
+                    },
+                    success: function (response) {
+                        showNotification('Supplier saved successfully!');
+                        $('#supplierForm')[0].reset();
+                    },
+                    error: function () {
+                        showNotification('Error saving supplier. Please try again!');
+                    },
+                    complete: function () {
+                        $('button[type="submit"]').prop('disabled', false).html('<i class="bi bi-save me-2"></i> Save Supplier');
+                    }
+                });
+            });
+        });
+    </script>
+}

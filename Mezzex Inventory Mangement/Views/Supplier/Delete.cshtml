@@ -1,0 +1,53 @@
+﻿@model Mezzex_Inventory_Mangement.Models.Supplier
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-danger text-white rounded-top-4">
+                    <h3 class="card-title text-center mb-0">Delete Supplier</h3>
+                </div>
+                <div class="card-body bg-light rounded-bottom-4">
+                    <h5 class="text-center text-danger">
+                        Are you sure you want to delete the following supplier?
+                    </h5>
+
+                    <div class="mt-4">
+                        <p><strong>Supplier Name:</strong> @Model.SupplierName</p>
+                        <p><strong>Email:</strong> @Model.Email</p>
+                        <p><strong>Phone:</strong> @Model.Phone</p>
+                        <p>
+                            <strong>Associated Companies:</strong>
+                            @if (Model.Companies?.Any() == true)
+                            {
+                                <ul>
+                                    @foreach (var company in Model.Companies)
+                                    {
+                                        <li>@company.CompanyName</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span>None</span>
+                            }
+                        </p>
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-2">
+                        <form asp-action="Delete" method="post">
+                            <input type="hidden" name="id" value="@Model.SupplierId" />
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash me-2"></i> Confirm Delete
+                            </button>
+                        </form>
+                        <a href="@Url.Action("Index", "Supplier")" class="btn btn-secondary btn-sm">
+                            <i class="bi bi-arrow-left me-2"></i> Cancel
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

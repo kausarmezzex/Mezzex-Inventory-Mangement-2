@@ -1,8 +1,11 @@
-﻿namespace Mezzex_Inventory_Mangement.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Mezzex_Inventory_Mangement.Models
 {
     public class Category : BaseEntity
     {
-        public int Id { get; set; }
+        [Key]
+        public int CategoryId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
 

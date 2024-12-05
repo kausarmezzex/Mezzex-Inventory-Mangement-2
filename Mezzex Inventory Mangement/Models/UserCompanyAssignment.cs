@@ -1,8 +1,11 @@
-﻿namespace Mezzex_Inventory_Mangement.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Mezzex_Inventory_Mangement.Models
 {
     public class UserCompanyAssignment : BaseEntity
     {
-        public int Id { get; set; }
+        [Key]
+        public int UserCompanyAssignmentId { get; set; }
         public int UserId { get; set; }
         public int CompanyId { get; set; }
         public List<int> SellingChannelIds { get; set; } = new List<int>();  // Stores selected SellingChannel IDs

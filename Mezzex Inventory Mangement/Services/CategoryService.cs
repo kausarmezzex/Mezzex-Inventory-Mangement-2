@@ -27,12 +27,12 @@ namespace Mezzex_Inventory_Mangement.Services
             return await _context.Categories
                 .Where(c => !c.IsDeleted) // Exclude deleted categories
                 .Include(c => c.ParentCategory)
-                .FirstOrDefaultAsync(c => c.Id == id);
+                .FirstOrDefaultAsync(c => c.CategoryId == id);
         }
 
         public async Task<bool> UpdateCategoryAsync(Category category)
         {
-            var existingCategory = await _context.Categories.FindAsync(category.Id);
+            var existingCategory = await _context.Categories.FindAsync(category.CategoryId);
             if (existingCategory == null)
             {
                 return false;
@@ -62,7 +62,7 @@ namespace Mezzex_Inventory_Mangement.Services
         {
             var category = await _context.Categories
                 .Include(c => c.SubCategories)
-                .FirstOrDefaultAsync(c => c.Id == id);
+                .FirstOrDefaultAsync(c => c.CategoryId == id);
 
             if (category == null)
             {
@@ -96,7 +96,7 @@ namespace Mezzex_Inventory_Mangement.Services
 
             string BuildHierarchyName(Category category, List<Category> allCategories)
             {
-                var parentCategory = allCategories.FirstOrDefault(c => c.Id == category.ParentCategoryId);
+                var parentCategory = allCategories.FirstOrDefault(c => c.CategoryId == category.ParentCategoryId);
                 if (parentCategory != null)
                 {
                     return $"{BuildHierarchyName(parentCategory, allCategories)} >> {category.Name}";
@@ -109,7 +109,7 @@ namespace Mezzex_Inventory_Mangement.Services
                 var hierarchicalName = BuildHierarchyName(category, allCategories);
                 flattenedCategories.Add(new Category
                 {
-                    Id = category.Id,
+                    CategoryId = category.CategoryId,
                     Name = hierarchicalName,
                     ParentCategoryId = category.ParentCategoryId
                 });
@@ -138,7 +138,7 @@ namespace Mezzex_Inventory_Mangement.Services
         public async Task<List<Category>> GetCategoriesByIdsAsync(int[] categoryIds)
         {
             return await _context.Categories
-                                 .Where(c => categoryIds.Contains(c.Id) && !c.IsDeleted) // Only include non-deleted categories
+                                 .Where(c => categoryIds.Contains(c.CategoryId) && !c.IsDeleted) // Only include non-deleted categories
                                  .ToListAsync();
         }
     }

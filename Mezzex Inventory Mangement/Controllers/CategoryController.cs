@@ -76,7 +76,7 @@ namespace Mezzex_Inventory_Mangement.Controllers
 
             var flattenedCategories = await _categoryService.GetHierarchicalCategoriesAsync(ascending: false);
             ViewBag.ParentCategories = flattenedCategories
-               .Where(c => c.Id != id) // Exclude the current category and inactive ones
+               .Where(c => c.CategoryId != id) // Exclude the current category and inactive ones
                 .ToList();
             return View(category);
         }
@@ -85,7 +85,7 @@ namespace Mezzex_Inventory_Mangement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Category category)
         {
-            if (id != category.Id)
+            if (id != category.CategoryId)
             {
                 return BadRequest();
             }
@@ -109,7 +109,7 @@ namespace Mezzex_Inventory_Mangement.Controllers
 
             var flattenedCategories = await _categoryService.GetHierarchicalCategoriesAsync(ascending: false);
             ViewBag.ParentCategories = flattenedCategories
-                .Where(c => c.Id != id) // Exclude the current category and inactive ones
+                .Where(c => c.CategoryId != id) // Exclude the current category and inactive ones
                 .ToList();
             return View(category);
         }

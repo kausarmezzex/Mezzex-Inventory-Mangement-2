@@ -19,12 +19,12 @@
                     <td>@pages.Name</td>
                     @foreach (var role in Model.Roles)
                     {
-                        var isChecked = Model.PageRoleMappings.Any(m => m.PageId == pages.Id && m.RoleId == role.Id);
+                        var isChecked = Model.PageRoleMappings.Any(m => m.PageId == pages.PageId && m.RoleId == role.Id);
                         <td class="text-center">
                             <input 
                                 type="checkbox" 
                                 class="role-page-checkbox" 
-                                data-page-id="@pages.Id" 
+                                data-page-id="@pages.PageId" 
 @using Mezzex_Inventory_Mangement.ViewModels
                                 data-role-id="@role.Id" 
                                 @(isChecked ? "checked" : "") />

@@ -1,0 +1,187 @@
+﻿@model Mezzex_Inventory_Mangement.Models.Supplier
+<style>
+    .card {
+        margin-top: 2rem;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .fw-bold {
+        font-weight: bold !important;
+    }
+</style>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-info text-white rounded-top-4">
+                    <h3 class="card-title text-center mb-0">
+                        <i class="bi bi-file-earmark-person me-2"></i> Supplier Details
+                    </h3>
+                </div>
+                <div class="card-body bg-light rounded-bottom-4">
+                    <!-- Supplier Information -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Supplier Name:</h5>
+                        <p>@Model.SupplierName</p>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Email:</h5>
+                        <p>@Model.Email</p>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Phone Number:</h5>
+                        <p>@Model.Phone</p>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Website:</h5>
+                        @if (!string.IsNullOrEmpty(Model.WebsiteName))
+                        {
+                            <p>@Model.WebsiteName</p>
+                        }
+                        else
+                        {
+                            <p>N/A</p>
+                        }
+                    </div>
+                   
+
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Account Number:</h5>
+                        @if (!string.IsNullOrEmpty(Model.AccountNumber))
+                        {
+                            <p>@Model.AccountNumber</p>
+                        }
+                        else
+                        {
+                            <p>N/A</p>
+                        }
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Representative Name:</h5>
+                        @if (!string.IsNullOrEmpty(Model.RepresentativeName))
+                        {
+                            <p>@Model.RepresentativeName</p>
+                        }
+                        else
+                        {
+                            <p>N/A</p>
+                        }
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Address:</h5>
+                        @if (!string.IsNullOrEmpty(Model.Address))
+                        {
+                            <p>@Model.Address</p>
+                        }
+                        else
+                        {
+                            <p>N/A</p>
+                        }
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="fw-bold">VAT Cycle:</h5>
+                        @if (!string.IsNullOrEmpty(Model.VatCycle))
+                        {
+                            <p>@Model.VatCycle</p>
+                        }
+                        else
+                        {
+                            <p>N/A</p>
+                        }
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Status:</h5>
+                        <p>
+                            @if (Model.IsDeleted)
+                            {
+                                <span class="badge bg-danger">Inactive</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                        </p>
+                    </div>
+
+                    <!-- Associated Companies -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Associated Companies:</h5>
+                        @if (Model.Companies != null && Model.Companies.Any())
+                        {
+                            <ul>
+                                @foreach (var company in Model.Companies)
+                                {
+                                    <li>@company.CompanyName</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p>No companies associated with this supplier.</p>
+                        }
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="fw-bold">created By:</h5>
+                        @if (!string.IsNullOrEmpty(Model.CreatedBy))
+                        {
+                            <p>@Model.CreatedBy</p>
+                        }
+                        else
+                        {
+                            <p>N/A</p>
+                        }
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Modify By:</h5>
+                        @if (!string.IsNullOrEmpty(Model.ModifiedBy))
+                        {
+                            <p>@Model.ModifiedBy</p>
+                        }
+                        else
+                        {
+                            <p>N/A</p>
+                        }
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Created On:</h5>
+                        @if (Model.CreatedOn != null)
+                        {
+                            <p>@Model.CreatedOn.GetValueOrDefault().ToString("yyyy-MM-dd")</p> <!-- Example: 03 Dec 2024, 10:30 AM -->
+                        }
+                        else
+                        {
+                            <p>N/A</p>
+                        }
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Modify On:</h5>
+                        @if (Model.ModifiedOn != null)
+                        {
+                            <p>@Model.ModifiedOn.GetValueOrDefault().ToString("yyyy-MM-dd")</p> <!-- Example: 03 Dec 2024, 10:30 AM -->
+                        }
+                        else
+                        {
+                            <p>N/A</p>
+                        }
+                    </div>
+                    <!-- Back Button -->
+                    <div class="d-grid gap-2">
+                        <a href="@Url.Action("Index", "Supplier")" class="btn btn-secondary btn-lg">
+                            <i class="bi bi-arrow-left me-2"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

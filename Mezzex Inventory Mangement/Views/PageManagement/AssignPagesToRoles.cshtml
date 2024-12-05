@@ -1,8 +1,5 @@
 ﻿@model Mezzex_Inventory_Mangement.ViewModels.AssignPagesToRolesViewModel
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" /> <!-- Bootstrap Icons -->
-
 <style>
     .compact-table {
         font-size: 0.9em;
@@ -129,18 +126,18 @@
                                             data-controller-name="@group.Key">
                                         @foreach (var pages in group.Value)
                                         {
-                                            var isSelected = Model.PageRoleMappings.Any(m => m.PageId == pages.Id && m.RoleId == role.Id);
+                                            var isSelected = Model.PageRoleMappings.Any(m => m.PageId == pages.PageId && m.RoleId == role.Id);
 
                                             // Extract the name after the "-" character
                                             var displayName = pages.Name.Contains('-') ? pages.Name.Split('-')[1].Trim() : pages.Name;
 
                                             if (isSelected)
                                             {
-                                                <option value="@pages.Id" selected>@displayName</option>
+                                                <option value="@pages.PageId" selected>@displayName</option>
                                             }
                                             else
                                             {
-                                                <option value="@pages.Id">@displayName</option>
+                                                <option value="@pages.PageId">@displayName</option>
                                             }
                                         }
                                     </select>
@@ -148,14 +145,14 @@
                                     <input type="checkbox" class="form-check-input role-checkbox"
                                            data-role-id="@role.Id"
                                            data-controller-name="@group.Key"
-                                    @(Model.PageRoleMappings.Any(m => m.RoleId == role.Id && group.Value.Any(p => p.Id == m.PageId)) ? "checked" : "") />
+                                    @(Model.PageRoleMappings.Any(m => m.RoleId == role.Id && group.Value.Any(p => p.PageId == m.PageId)) ? "checked" : "") />
                                 </div>
                                 <!-- Selected Pages Below -->
                                 <div class="selected-pages">
                                     @if (Model.PageRoleMappings.Any(m => m.RoleId == role.Id))
                                     {
                                         var selectedPages = group.Value
-                                        .Where(p => Model.PageRoleMappings.Any(m => m.PageId == p.Id && m.RoleId == role.Id))
+                                        .Where(p => Model.PageRoleMappings.Any(m => m.PageId == p.PageId && m.RoleId == role.Id))
                                         .Select(p => p.Name.Contains('-') ? p.Name.Split('-')[1].Trim() : p.Name)
                                         .ToList();
 
@@ -186,10 +183,7 @@
 </form>
 
 @section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
+  
     <script>
         $(document).ready(function () {
             $('#pageSearch').on('keyup', function () {

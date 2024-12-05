@@ -212,12 +212,12 @@ namespace Mezzex_Inventory_Mangement.Controllers
                 {
                     foreach (var page in freeAccessPages)
                     {
-                        if (!_context.PageRoleMappings.Any(prm => prm.RoleId == role.Id && prm.PageId == page.Id))
+                        if (!_context.PageRoleMappings.Any(prm => prm.RoleId == role.Id && prm.PageId == page.PageId))
                         {
                             _context.PageRoleMappings.Add(new PageRoleMapping
                             {
                                 RoleId = role.Id,
-                                PageId = page.Id
+                                PageId = page.PageId
                             });
                         }
                     }
@@ -227,12 +227,12 @@ namespace Mezzex_Inventory_Mangement.Controllers
                 var allPages = _context.Pages.ToList();
                 foreach (var page in allPages)
                 {
-                    if (!_context.PageRoleMappings.Any(prm => prm.RoleId == administratorRoleId && prm.PageId == page.Id))
+                    if (!_context.PageRoleMappings.Any(prm => prm.RoleId == administratorRoleId && prm.PageId == page.PageId))
                     {
                         _context.PageRoleMappings.Add(new PageRoleMapping
                         {
                             RoleId = administratorRoleId,
-                            PageId = page.Id
+                            PageId = page.PageId
                         });
                     }
                 }

@@ -25,7 +25,7 @@ namespace Mezzex_Inventory_Mangement.Services
         {
             return await _context.Brands
        .Include(b => b.Categories) // Include related Categories
-       .FirstOrDefaultAsync(b => b.Id == id);
+       .FirstOrDefaultAsync(b => b.BrandId == id);
         }
 
         public async Task AddBrandAsync(Brand brand)
@@ -38,7 +38,7 @@ namespace Mezzex_Inventory_Mangement.Services
         {
             var existingBrand = await _context.Brands
                 .Include(b => b.Categories) // Include Categories relationship
-                .FirstOrDefaultAsync(b => b.Id == brand.Id);
+                .FirstOrDefaultAsync(b => b.BrandId == brand.BrandId);
 
             if (existingBrand == null) return false;
 
@@ -63,7 +63,7 @@ namespace Mezzex_Inventory_Mangement.Services
             {
                 foreach (var category in brand.Categories)
                 {
-                    var existingCategory = await _context.Categories.FindAsync(category.Id);
+                    var existingCategory = await _context.Categories.FindAsync(category.CategoryId);
 
                     if (existingCategory != null)
                     {
@@ -89,5 +89,36 @@ namespace Mezzex_Inventory_Mangement.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+
+        public async Task SaveBlockedChannel(int companyId, int brandId, int channelId, string reason)
+        {
+            // Check if the blocked channel already exists
+            var existingBlockedChannel = await _context.BlockedChannels
+                .FirstOrDefaultAsync(bc => bc.CompanyId == companyId && bc.BrandId == brandId && bc.ChannelId == channelId);
+
+            if (existingBlockedChannel != null)
+            {
+                // Update the reason
+                existingBlockedChannel.Reason = reason;
+                _context.BlockedChannels.Update(existingBlockedChannel);
+            }
+            else
+            {
+                // Add new blocked channel
+                var newBlockedChannel = new BlockedChannel
+                {
+                    CompanyId = companyId,
+                    BrandId = brandId,
+                    ChannelId = channelId,
+                    Reason = reason
+                };
+
+                _context.BlockedChannels.Add(newBlockedChannel);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
     }
 }
